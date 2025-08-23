@@ -21,7 +21,7 @@ private:
 	vec3d up;
 
 public:
-	Camera(int FOV = 30, double cfar = 10, double cnear = 0.01);
+	Camera(int FOV = 30, double cfar = 100, double cnear = 0.01);
 	~Camera();
 
 	void setFOV(int f);

@@ -2,6 +2,8 @@
 
 #include <math.h>
 #include <iostream>
+
+#define DPI 6.2831853
 #define MPI 3.1415926
 #define HPI 1.5707963
 #define QPI 0.7853981
@@ -94,8 +96,8 @@ namespace mathT
 		{
 			if(other != 0)
 			{
-				this->x /= other.x;
-				this->y /= other.y;
+				this->x /= other;
+				this->y /= other;
 			}
 			else
 			{
@@ -952,14 +954,14 @@ namespace mathT
 		{
 			return quat(a - other.a, b - other.b, c - other.c, d - other.d);
 		}
-		quat<T> operator*(quat<T>& other)
+		quat<T> operator*(quat<T> other)
 		{
 			return quat(a * other.a - b * other.b - c * other.c - d * other.d,
 				a * other.b + b * other.a + c * other.d - d * other.c,
 				a * other.c - b * other.d + c * other.a + d * other.b,
 				a * other.d + b * other.c - c * other.b + d * other.a);
 		}
-		void operator=(quat<T>& other)
+		void operator=(quat<T> other)
 		{
 			a = other.a;
 			b = other.b;
@@ -1007,6 +1009,11 @@ namespace mathT
 		void operator*=(quat<T>& other)
 		{
 			*this = *this * other;
+		};
+		template<typename U>
+		void operator*=(U& scale)
+		{
+			*this = *this * scale;
 		};
 		mat4x4<T> rotation()
 		{
@@ -1062,6 +1069,11 @@ namespace mathT
 	typedef mat4x4<unsigned int> mat4x4u;
 	typedef mat4x4<int> mat4x4i;
 	typedef mat4x4<double> mat4x4d;
+
+	typedef quat<float> quatf;
+	typedef quat<unsigned int> quatu;
+	typedef quat<int> quati;
+	typedef quat<double> quatd;
 
 	template<typename T>
 	inline T dot(vec2<T> A, vec2<T> B)
@@ -1209,6 +1221,14 @@ namespace mathT
 		{
 			//theta =theta- 2*MPI*int(theta / (2 * MPI));
 			mat = mat * normalize(quat<double>(cos(theta/2), axis.x, axis.y, axis.z)).rotation();
+		}
+		//rotate along each axis (x,y,z) with their given angle (theta beta gamma) in the xyz order (NOT COMMUTATIVE!!!!)
+		inline void rotate(mat4x4d& mat, vec3d axis)
+		{
+			//theta =theta- 2*MPI*int(theta / (2 * MPI));
+			mat = mat * normalize(quat<double>(cos(axis.x / 2), 1, 0, 0)).rotation();
+			mat = mat * normalize(quat<double>(cos(axis.y / 2), 0, 1, 0)).rotation();
+			mat = mat * normalize(quat<double>(cos(axis.z / 2), 0, 0, 1)).rotation();
 		}
 	};
 }

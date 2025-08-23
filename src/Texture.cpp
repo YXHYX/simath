@@ -1,8 +1,8 @@
 #include "Texture.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "include/stb_image.h" 
+#include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "include/stb_image_write.h"
+#include <stb_image_write.h>
 
 //map texture colors to fixed colors once the texture is loaded
 unsigned short Texture::colorMap(unsigned char r, unsigned char g, unsigned char b)

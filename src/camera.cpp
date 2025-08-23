@@ -51,8 +51,6 @@ vec3d Camera::getDirection()
 	return direction;
 }
 
-
-
 void Camera::update()
 {
 
@@ -77,13 +75,11 @@ void Camera::update()
 		position += direction* 0.6;
 	if (GetAsyncKeyState(0x53) & 0x8000) //s
 		position += direction*-0.6;
-		
 	if (GetAsyncKeyState(0x41) & 0x8000) //A
 		position += right*0.6;  
 	if (GetAsyncKeyState(0x44) & 0x8000) //D
-	{
 		position += right * -0.6;
-	}
+	
 	//position.y = y;
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 		position += up*0.6;

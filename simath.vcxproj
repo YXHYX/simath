@@ -70,6 +70,22 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include;$(SolutionDir)src</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include;$(SolutionDir)src</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)output\$(Configuration)\</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include;$(SolutionDir)src</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)output\$(Configuration)\</OutDir>
+    <IncludePath>$(SolutionDir)include;$(IncludePath);$(SolutionDir)include;$(SolutionDir)src</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -127,22 +143,45 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="green_matrix.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="tools.cpp" />
+    <ClCompile Include="examples\Mandelbrot.cpp" />
+    <ClCompile Include="src\shapes\Line.cpp" />
+    <ClCompile Include="src\shapes\Point.cpp" />
+    <ClCompile Include="src\shapes\Cube.cpp" />
+    <ClCompile Include="src\fizix\ForceField.cpp" />
+    <ClCompile Include="src\fizix\PhysicsWorld.cpp" />
+    <ClCompile Include="src\fizix\RigidBody.cpp" />
+    <ClCompile Include="src\fizix\Solver.cpp" />
+    <ClCompile Include="src\fizix\MaterialPoint.cpp" />
+    <ClCompile Include="src\camera.cpp" />
+    <ClCompile Include="src\Graphics.cpp" />
+    <ClCompile Include="examples\green_matrix.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\shapes\Object.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\tools.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="Graphics.h" />
+    <ClInclude Include="examples\PerlinNoise.h" />
+    <ClInclude Include="examples\Mandelbrot.h" />
+    <ClInclude Include="examples\Fluid.h" />
+    <ClInclude Include="src\shapes\Line.h" />
+    <ClInclude Include="src\shapes\Point.h" />
+    <ClInclude Include="src\shapes\Cube.h" />
+    <ClInclude Include="examples\hopf.h" />
+    <ClInclude Include="src\fizix\ForceField.h" />
+    <ClInclude Include="src\fizix\PhysicsWorld.h" />
+    <ClInclude Include="src\fizix\RigidBody.h" />
+    <ClInclude Include="src\fizix\Solver.h" />
+    <ClInclude Include="src\fizix\MaterialPoint.h" />
+    <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\Graphics.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="include\stb_image_write.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="tools.h" />
+    <ClInclude Include="src\shapes\Object.h" />
+    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\tools.h" />
+    <ClInclude Include="src\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

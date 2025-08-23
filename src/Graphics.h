@@ -6,9 +6,13 @@
 * quaternions done
 * transformations done
 * 
-* texturing
-* shading
+* texturing semi-done? add dithering??
+* 
+* shading 
 * light etc
+* 
+* cool math shit:
+*	hopf's fibration
 * 
 * try celshading 
 */
@@ -16,26 +20,26 @@
 
 
 #pragma once
-
 #include <windows.h>
 #include "camera.h"
-#include "Texture.h"
+#include "shapes/Object.h"
+#include "shapes/Line.h"
+#include "shapes/Point.h"
+#include "shapes/Cube.h"
 #include <vector>
 
 //normal graphics buffer
 #define HEIGHT 100
 #define WIDTH  400
-#define OFFSET_X 0
-#define OFFSET_Y 0
 
 //gui buffer
 #define GHEIGHT 30
 #define GWIDTH 400
 //debu buffer
-#define DHEIGHT 100
-#define DWIDTH 30
+#define DHEIGHT 130
+#define DWIDTH 70
 
-#define GRAPHICS_DEBUG
+//#define GRAPHICS_DEBUG
 
 using namespace mathT;
 
@@ -65,7 +69,7 @@ namespace graphics
 		{
 			int i = this->texture.use_count();
 		}
-		void setTexture(Texture const&  t)
+		void setTexture(Texture const& t)
 		{
 			this->texture = std::make_shared<Texture>(&t);
 		}
@@ -79,59 +83,6 @@ namespace graphics
 		unsigned short attr = 14;
 		char Char = '.';
 	};
-	struct Object 
-	{
-		//set of all vertices 
-		std::vector<vec3f> vertices;
-		std::vector<vec2f> texcoords;
-		std::shared_ptr<Texture> texture;
-		//define each triangle to draw
-		std::vector<unsigned int> indices;
-		//define the color of each triangle
-		std::vector<unsigned int> colors;
-		mat4x4d model;
-	};
-	enum Colors
-	{
-		
-		BLACK = 0x0000,
-		BLUE = 0x0001,
-		GREEN = 0x0002,
-		CYAN = 0x0003,
-		RED = 0x0004,
-		PURPLE = 0x0005,
-		GOLD = 0x0006,
-		LIHGT_GREY = 0x0007,
-		//INTENSIFIED
-		GREY = 0x0008,
-		LIGHT_BLUE = 0x0009,
-		LIME = 0x000A,
-		LIGHT_CYAN = 0x000B,
-		LIGHT_RED = 0x000C,
-		LIGHT_PURPLE = 0x000D,
-		YELLOW = 0x000E,
-		WHITE = 0x000F,
-
-
-		//BACKGROUND COLOR
-		B_BLACK = 0x0000,
-		B_BLUE = 0x0010,
-		B_GREEN = 0x0020,
-		B_CYAN = 0x0030,
-		B_RED = 0x0040,
-		B_PURPLE = 0x0050,
-		B_YELLOW = 0x0060,
-		B_LIGHT_GREY = 0x0070,
-		//INTENSIFIED
-		B_GREY = 0x0080,
-		B_LIGHT_BLUE = 0x0090,
-		B_LIME = 0x00A0,
-		B_LIGHT_CYAN = 0x00B0,
-		B_LIGHT_RED = 0x00C0,
-		B_LIGHT_PURPLE = 0x00D0,
-		B_GOLD = 0x00E0,
-		B_WHITE = 0x00F0,
-	};
 
 	//fix up
 	enum Styles 
@@ -139,9 +90,6 @@ namespace graphics
 		//LINE AT TOP
 		LTOP = 0x0200
 	};
-
-	// https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix.html
-
 	class Graphics
 	{
 	private:
@@ -149,10 +97,10 @@ namespace graphics
 		float dt;
 	
 
-		//
-		int height, width, offset_x, offset_y;
-		int gheight, gwidth, goff_x = 0, goff_y = HEIGHT;
-		int dheight, dwidth, doff_x = WIDTH, doff_y = 0;
+		// buffer parameter data, g for gui, d for debug
+		int height, width;
+		int gheight, gwidth;
+		int dheight, dwidth;
 		
 		HANDLE hConsole;
 		
@@ -176,22 +124,24 @@ namespace graphics
 		COORD debugOffset;
 		SMALL_RECT debugRegion;
 
-		//vector to store and sort triangles depending on depth, visibility etc...
+		//vector to store and sort triangles, lines, points depending on depth, visibility etc...
 		std::vector<Triangle> triangles;
+		std::vector<Line> lines;
+		std::vector<Point> points;
 		
 		Camera camera;
 		void computeDepth();
 		bool pointInTriangle(vec2f p, Triangle t);
 		int safeIndex(int i, int j, int w = -1, int h = -1);
 	public:
-		Graphics(int h = HEIGHT, int w = WIDTH, int ox = OFFSET_X, int oy = OFFSET_Y, int gw = GWIDTH, int gh = GHEIGHT, int dw = DWIDTH, int dh = DHEIGHT);
+		Graphics(int h = HEIGHT, int w = WIDTH, int gw = GWIDTH, int gh = GHEIGHT, int dw = DWIDTH, int dh = DHEIGHT);
 		~Graphics();
 
 		CHAR_INFO* getBuffer();
 		COORD getBufferSize();
 		COORD getBufferOffset();
 
-		//DRAWING FUNCTIONS
+		//DRAWING FUNCTIONS FOR 2D PURPOSES
 		
 		//clear the buffer with the desired character and attributes (leave blank for blank canvas)
 		void clearBuffer(char c = ' ', unsigned short attr = Colors::BLACK);
@@ -213,12 +163,30 @@ namespace graphics
 		void fillCircle(int x, int y, int r, char c, unsigned short attr);
 		//Fill a triangle
 		void fillTriangle(vec2i p1, vec2i p2, vec2i p3, char c, unsigned short attr);
-		
-		void drawObject(Object& obj, char c, unsigned short attr);
+		//Set a pixel on the buffer
+		void setPixel(int x, int y, char c, unsigned int attr);
+		//Draw a contour around buffers
 		void drawContour(int thickness, char c, unsigned short attr);
+		/**********************/
+
+		// drawing functions for 3D
+
+		vec2u getDepth(float z, unsigned short attr);
+		void drawObject(Object& obj, char c, unsigned short attr);
+		void drawLine(Line l);
+		void drawPoint(Point p);
+
+		// gui/debug functions
+
+		void printGui();
+
+		void printDebug();
+
 		void updateInput();
-		//Write the buffer onto the console and display it
+		//Write the buffer onto the console 
 		void render();
+		// display the buffer content
+		void display();
 	};
 
 }
