@@ -1,10 +1,10 @@
-// green_matrix.cpp : 
+#include "example_demos.h"
 
 #include <iostream>
 #include "tools.h"
 #include "Graphics.h"
 
-void matrix()
+void green_matrix_demo()
 {
 	graphics::Graphics graph;
 	const int amount = 60;

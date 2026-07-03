@@ -1,13 +1,13 @@
 #include <iostream>
 #include "tools.h"
 #include "Graphics.h"
-
+#include "example_demos.h"
 #include "../examples/Mandelbrot.h"
 
 using namespace graphics;
 
 //rename to main and comment out the main function somewhere else idk
-int mandelbrot()
+void mandelbrot_demo()
 {
 	graphics::Graphics graph;
 
@@ -36,5 +36,5 @@ int mandelbrot()
 
 		graph.display();
 	}
-	return 0;
+
 }
