@@ -8,6 +8,7 @@ private:
 
 	unsigned int color;
 	char character = ' ';
+
 public:
 	Line();
 	Line(mathT::vec3d p1, mathT::vec3d p2, unsigned int co, char c);

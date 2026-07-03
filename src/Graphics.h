@@ -27,7 +27,7 @@
 #include "shapes/Point.h"
 #include "shapes/Cube.h"
 #include "shapes/Square.h"
-#include <vector>
+#include "resource/font.h"
 
 //normal graphics buffer
 #define HEIGHT 100
@@ -184,6 +184,11 @@ namespace graphics
 		void setPixel(int x, int y, char c, unsigned int attr);
 		//Draw a contour around buffers
 		void drawContour(int thickness, char c, unsigned short attr);
+		//draw text using a font!
+		void drawText(std::string text,vec2i position, std::shared_ptr<Font> f, unsigned short attr);
+		
+
+
 		/**********************/
 
 		// drawing functions for 3D

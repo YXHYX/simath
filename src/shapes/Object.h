@@ -2,7 +2,7 @@
 
 #include "tools.h"
 #include <vector>
-#include "Texture.h"
+#include "../resource/Texture.h"
 #include "Transform.h"
 
 using namespace mathT;

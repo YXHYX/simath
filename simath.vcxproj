@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="examples\benchmark_demo.cpp" />
     <ClCompile Include="examples\controller_demo.cpp" />
+    <ClCompile Include="examples\font_display_demo.cpp" />
     <ClCompile Include="examples\sound_demo.cpp" />
     <ClCompile Include="examples\video_player_demo.cpp" />
     <ClCompile Include="src\fizix_control\LQRController.cpp" />
@@ -160,7 +161,7 @@
     <ClCompile Include="src\game\entities\entity.cpp" />
     <ClCompile Include="examples\audio_visualizer_demo.cpp" />
     <ClCompile Include="src\source.cpp" />
-    <ClCompile Include="src\text\font.cpp" />
+    <ClCompile Include="src\resource\font.cpp" />
     <ClCompile Include="src\fizix\collision\CollisionHandler.cpp" />
     <ClCompile Include="examples\physics_demo.cpp" />
     <ClCompile Include="src\fizix_control\PIDController.cpp" />
@@ -184,7 +185,7 @@
     <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="examples\green_matrix_demo.cpp" />
     <ClCompile Include="src\shapes\Object.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\resource\Texture.cpp" />
     <ClCompile Include="src\tools.cpp" />
     <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
@@ -195,7 +196,7 @@
     <ClInclude Include="src\ConfigHandler.h" />
     <ClInclude Include="src\game\entities\entity.h" />
     <ClInclude Include="examples\Physics.h" />
-    <ClInclude Include="src\text\font.h" />
+    <ClInclude Include="src\resource\font.h" />
     <ClInclude Include="include\al.h" />
     <ClInclude Include="include\alc.h" />
     <ClInclude Include="include\sndfile.h" />
@@ -227,7 +228,7 @@
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="include\stb_image_write.h" />
     <ClInclude Include="src\shapes\Object.h" />
-    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\resource\Texture.h" />
     <ClInclude Include="src\tools.h" />
     <ClInclude Include="src\Transform.h" />
   </ItemGroup>

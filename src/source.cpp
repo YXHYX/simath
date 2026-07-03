@@ -42,5 +42,5 @@ by configuring the settings json file for easier fucking startup without fucking
 */
 
 int main() {
-	benchmark_demo();
+	font_display_demo();
 }
