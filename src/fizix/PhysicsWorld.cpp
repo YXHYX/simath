@@ -3,7 +3,7 @@
 PhysicsWorld::PhysicsWorld()
 {
 	//gravity
-	this->globalForces.push_back(vec3d(0, 10, 0));
+	this->globalForces.push_back(vec3d(0, -10, 0));
 }
 
 PhysicsWorld::~PhysicsWorld()
@@ -11,10 +11,15 @@ PhysicsWorld::~PhysicsWorld()
 
 }
 
+void PhysicsWorld::addGlobalForce(vec3d force)
+{
+	this->globalForces.push_back(force);
+}
+
 void PhysicsWorld::addMaterialPoint(std::shared_ptr<Object> obj, double mass)
 {
 	this->materialPoints.push_back(std::make_shared<MaterialPoint>(obj,obj->transform.getPosition(),mass));
-	this->materialPoints.at(0)->dynamic = false;
+	//this->materialPoints.at(0)->dynamic = false;
 }
 
 void PhysicsWorld::addPositionConstraint(std::shared_ptr<MaterialPoint> obj1, std::shared_ptr<MaterialPoint> obj2, float dist)
@@ -32,6 +37,11 @@ std::vector<std::shared_ptr<MaterialPoint>>* PhysicsWorld::getMaterialPoints()
 	return &this->materialPoints;
 }
 
+void PhysicsWorld::addForceField(vec3d size, vec3d position, vec3d f, vec3d(*fF)(vec3d c))
+{
+	this->forceFields.push_back(std::make_unique<ForceField>(size, position, f, fF));
+}
+
 
 void PhysicsWorld::resetForces()
 {
@@ -43,14 +53,17 @@ void PhysicsWorld::resetForces()
 
 void PhysicsWorld::update(const float& dt)
 {
-	this->resetForces();
-
+	
+	//APPLY FORCES
 	for (auto& e : this->materialPoints)
 	{
 		if (!e->dynamic)
 			continue;
 		for (auto& d : this->globalForces)
 			e->applyForce(d);
+
+		for (auto& fF : this->forceFields)
+			e->applyForce(fF->getForce(e->getPosition()));
 	}
 	for (int i = 0; i < this->CONSTRAINT_ITERATION; i++)
 		for (auto& e : this->pConstraints)

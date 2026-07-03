@@ -21,27 +21,33 @@ private:
 	std::vector<std::shared_ptr<PositionConstraint>> pConstraints;
 	std::vector<std::shared_ptr<Spring>> springs;
 	std::vector<std::unique_ptr<ForceField>> forceFields;
+
+
+	// solvers
+	void solveEuler(const float& dt);
+	void solveRK4(const float& dt);
+
 public:
 	PhysicsWorld();
 	~PhysicsWorld();
-	
 
-	
+	// reset all objects accelerations to 0
+	void resetForces();
+
 	//debug functions
 	//void DrawSprings(graphics::);
-
+	void addGlobalForce(vec3d force);
 	void addMaterialPoint(std::shared_ptr<Object> obj, double mass);
 	void addPositionConstraint(std::shared_ptr<MaterialPoint> obj1, std::shared_ptr<MaterialPoint> obj2, float dist);
 	void addSpring(std::shared_ptr<MaterialPoint> obj1, std::shared_ptr<MaterialPoint> obj2,
 		float stiff, float length, float damping = 0);
 	std::vector<std::shared_ptr<MaterialPoint>> *getMaterialPoints();
 
-	void resetForces();
-	
+	//create a force field using a position(vec3d) -> force(vec3d) function 
+	void addForceField(vec3d size, vec3d position, vec3d f, vec3d(*fF)(vec3d c));
+
+	//update the world
 	void update(const float &dt);
-	
-	void solveEuler(const float& dt);
-	void solveRK4(const float& dt);
 
 };
 

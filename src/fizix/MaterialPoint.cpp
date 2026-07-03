@@ -54,7 +54,9 @@ void MaterialPoint::resetAcceleration()
 
 void MaterialPoint::applyForce(vec3d force)
 {
-	this->acceleration += force / this->mass;
+	this->acceleration.x += this->x_unlock*force.x / this->mass;
+	this->acceleration.y += this->y_unlock * force.y / this->mass;
+	this->acceleration.z += this->z_unlock * force.z / this->mass;
 }
 
 void MaterialPoint::setMass(double m)
@@ -64,15 +66,24 @@ void MaterialPoint::setMass(double m)
 
 void MaterialPoint::setAcceleration(vec3d a)
 {
-	this->acceleration = a;
+	this->acceleration.x = this->x_unlock * a.x;
+	this->acceleration.y = this->y_unlock * a.y;
+	this->acceleration.z = this->z_unlock * a.z;
 }
 
 void MaterialPoint::setVelocity(vec3d v)
 {
-	this->velocity = v;
+	this->velocity.x = this->x_unlock * v.x;
+	this->velocity.y = this->y_unlock * v.y;
+	this->velocity.z = this->z_unlock * v.z;
 }
 
 void MaterialPoint::setPosition(vec3d p)
 {
-	this->position = p;
+	this->position.x = this->x_unlock * p.x;
+	this->position.y = this->y_unlock * p.y;
+	this->position.z = this->z_unlock * p.z;
+	if (this->trajectory.size() > this->max_trajectory_size)
+		this->trajectory.clear();
+	this->trajectory.push_back(this->position);
 }

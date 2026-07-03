@@ -21,9 +21,17 @@ protected:
 
 	std::vector<vec3d> trajectory;
 	bool recordTrajectory;
+
+	//watafak ( optimize recording trajectory)
+	const int max_trajectory_size = 5000;
+
 public:
 
 	bool dynamic = true;
+
+	bool x_unlock = true;
+	bool y_unlock = true;
+	bool z_unlock = true;
 
 
 	MaterialPoint();
