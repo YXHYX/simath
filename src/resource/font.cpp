@@ -64,10 +64,22 @@ Font::Font(std::filesystem::path filepath)
         int k = data_start + offset;
         if (offset == 0xFFFF)
             continue;
+        //look for the minmax char_width if possible
+
         uint8_t char_width = static_cast<uint8_t>(fbytes[k]);
         uint8_t char_height = static_cast<uint8_t>(fbytes[k + 1]);
 
-        std::vector<char> row;
+        if (this->f_info.minSize.x > char_width)
+            this->f_info.minSize.x = char_width;
+        if (this->f_info.maxSize.x < char_width)
+            this->f_info.maxSize.x = char_width;
+
+        if (this->f_info.minSize.y > char_height)
+            this->f_info.minSize.y = char_height;
+        if (this->f_info.maxSize.y < char_height)
+            this->f_info.maxSize.y = char_height;
+
+        std::vector<std::pair<char, unsigned short>> row;
         k += 2;
         while (k < length) {
             char readByte = fbytes[k];
@@ -84,7 +96,7 @@ Font::Font(std::filesystem::path filepath)
                     k++;
                 }
                 else {
-                    row.push_back(readByte);
+                    row.push_back(std::pair<char, unsigned short>(readByte, (fbytes[k + 1] % 16) | int(fbytes[k + 1] / 16) << 16));
                     k += 2; // Skip color attribute metadata slot byte
                 }
             }
@@ -100,7 +112,7 @@ Font::Font(std::filesystem::path filepath)
                     k++;
                 }
                 else {
-                    row.push_back(readByte);
+                    row.push_back(std::pair<char, unsigned short>(readByte, 0));
                     k++;
                 }
             }
@@ -123,7 +135,7 @@ Font_Info* Font::getInfo()
 	return &this->f_info;
 }
 
-std::vector<std::vector<char>>* Font::getGlyph(char c)
+std::vector<std::vector<std::pair<char, unsigned short>>>* Font::getGlyph(char c)
 {
 	if(this->glyphs.count(c))
 		return &this->glyphs.at(c);

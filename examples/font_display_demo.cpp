@@ -21,7 +21,14 @@ void font_display_demo()
 
 	float elapsedTime = 0.00001;
 	float totalTime = 0.0001;
-	std::shared_ptr<Font> funnyfont = std::make_shared<Font>("res/ANNIVERX.TDF");
+	float factor = 2;
+	std::vector<std::shared_ptr<Font>> fonts;
+	
+	std::string path = "res";
+	for (const auto& entry : std::filesystem::directory_iterator(path))
+		fonts.push_back(std::make_shared<Font>(entry.path().string()));
+
+
 	while (true)
 	{
 		//timer for deltaTime
@@ -32,22 +39,19 @@ void font_display_demo()
 
 		//DEBUG STUFF
 		msg = "  TIME : " + std::to_string(elapsedTime / 10);
+		int num = 6;
 		graph.printGui(msg, vec2i(10, 3), Colors::B_WHITE);
-		graph.drawText("abcdefghijkl", vec2i(2, 2), funnyfont, Colors::WHITE);
+		
+		graph.drawText("WATCH YOUR BACK", vec2i(20, 5), fonts.at(int(totalTime)%fonts.size()), (int(12)) % 15);
 
-		//set positions
+		graph.drawText("WATCH YOUR BACK", vec2i(20, 20), fonts.at(int(totalTime + 1) % fonts.size()), (int(12)) % 15);
 
-		//draw objects
-		for (float i = 0; i < maxObjects; i++) {
-			resourceManager.getObject("o" + std::to_string(int(i)))->transform.setRotation(vec3f(totalTime) + vec3f(i / maxObjects, -i / maxObjects, i / maxObjects));
-			resourceManager.getObject("o" + std::to_string(int(i)))->transform.setPosition(
-				vec3f(30, 30, 30) + vec3f(10 * cos(totalTime + 6 * i / maxObjects), 10 * sin(totalTime - 6 * i / maxObjects), -10 * cos(totalTime + 6 * i / maxObjects)));
-		}
+		graph.drawText("WATCH YOUR BACK", vec2i(20, 35), fonts.at(int(totalTime + 2) % fonts.size()), (int(12)) % 15);
 
-		//draw objects
-		for (int i = 0; i < maxObjects; i++)
-			graph.drawObject(resourceManager.getObject("o" + std::to_string(i)), ' ', 0);
-
+		graph.drawText("WATCH YOUR BACK", vec2i(20, 50), fonts.at(int(totalTime + 3) % fonts.size()), (int(12)) % 15);
+		graph.drawText("WATCH YOUR BACK", vec2i(20, 65), fonts.at(int(totalTime + 4) % fonts.size()), (int(12)) % 15);
+		graph.drawText("WATCH YOUR BACK", vec2i(20, 80), fonts.at(int(totalTime + 5) % fonts.size()), (int(12)) % 15);
+		
 		//render everything
 		graph.render();
 		// then display

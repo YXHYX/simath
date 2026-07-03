@@ -103,6 +103,7 @@ namespace graphics
 	private:
 		//dummy variable
 		float dt;
+		int lettermaxxin = 0;
 	
 
 		// buffer parameter data, g for gui, d for debug

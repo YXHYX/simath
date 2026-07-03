@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <string>
 #include <unordered_map>
-
+#include "tools.h"
 //todo:
 // make a font loader to load .TDF fonts
 // add support for color shading
@@ -18,6 +18,8 @@ struct Font_Info {
 	char font_type;
 	char space_count;
 	int font_length;
+	mathT::vec2u maxSize= mathT::vec2u(0,0);
+	mathT::vec2u minSize= mathT::vec2u(5000,5000);
 };
 
 class Font
@@ -29,7 +31,7 @@ private:
 	//font info
 	Font_Info f_info;
 	//map any character to its glyph
-	std::unordered_map<char, std::vector<std::vector<char>>> glyphs;
+	std::unordered_map<char, std::vector<std::vector<std::pair<char,unsigned short>>>> glyphs;
 
 
 public:
@@ -37,6 +39,6 @@ public:
 	~Font();
 
 	Font_Info* getInfo();
-	std::vector<std::vector<char>>* getGlyph(char c);
+	std::vector<std::vector<std::pair<char, unsigned short>>>* getGlyph(char c);
 };
 

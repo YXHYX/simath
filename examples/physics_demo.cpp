@@ -9,32 +9,6 @@
 
 #include "example_demos.h"
 
-/*
-* TODO:
-*	- Z DEPTH buffer			done
-*	- clipping space			done
-*   - orthographic projetion
-*   - shading					SOMEWHAT DONE
-*   - proper dithering			ordered bayer 4x4 and floyd steinberg
-*   - lighting					somewhat made?
-*	- physics
-*		- better solvers						RK4 and euler for now
-*		- consistency checks (energy)			later
-*		- constraints
-*			- angular							later
-*			- linear							done
-*		- springs								done
-*		- forcefields							done
-*	- graphics
-*		- line rendering		done but gotta fix and optimize
-*		- z fighting and viewport clipping		
-*		- more dithering!
-*		- LIGHTING!!!!
-*	- resource manager
-*		- texture manager
-*		- models( if need for any)
-*		- sounds manager
-*/
 
 using namespace graphics;
 void physics_demo()

@@ -26,8 +26,11 @@
 *		- z fighting and viewport clipping		grah
 *		- more dithering!						not yet
 *		- LIGHTING!!!!							important but not yet
-*		- custom texts and fonts				on it
-*		- see possibility of using escape sequences ???
+*		- custom texts and fonts				semi done, make proper alignment and easier drawing also add support for attr
+*		- see possibility of using escape       NOT POSSIBLE, its too slow unless i hijack the WIN32 console itself and modify the rendering functions
+*			sequences      
+*		- combine ASCII art of texture			on it
+*			alongside for better results
 *	- resource manager
 *		- texture manager						done
 *		- models ( if need for any)				prob wont be done
@@ -35,8 +38,10 @@
 
 
 ADD AUTOMATIC CONFIGURATION THROUGH THE WINDOWS PATH:
-C:\Users\pear\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState
+C:\Users\<currentUser>\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState
 by configuring the settings json file for easier fucking startup without fucking up my terminal shit
+
+its done but dawg shit ui, maybe add launcher using imGUI instead?
 
 
 */

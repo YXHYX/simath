@@ -752,20 +752,37 @@ WCHAR cp437_to_wchar(BYTE cp437_byte) {
 }
 void graphics::Graphics::drawText(std::string text, vec2i position, std::shared_ptr<Font> f, unsigned short attr)
 {
-	int K = safeIndex(position.x, position.y, this->gwidth, this->gheight);
+	bool jiggle_letter = 1;
+	int K = safeIndex(position.x, position.y, this->width, this->height);
 	if (K > 0) {
 		//before printing
 		int temp = GetConsoleOutputCP();
 		SetConsoleOutputCP(437);
-		int offset = 0;
+		int offsetx = 0;
+		int offsety = 0;
+		int test = 0;
 		for(auto&& character: text){
 			//draw the text
 			//debug just draw the first character in the GUI buffers
-			std::vector<std::vector<char>>* glyph = f->getGlyph(character);
+			
+			if (character == ' ')
+			{
+				offsetx += f->getInfo()->maxSize.x;
+				continue;
+			}
+			else if (character == '\n') {
+				offsety += f->getInfo()->maxSize.y;
+				offsetx = 0;
+				continue;
+			}
+			std::vector<std::vector<std::pair<char, unsigned short>>>* glyph = f->getGlyph(character);
 			if (!glyph)
 				continue;
+
+			
 			//render glyph
 			int maxWide = 0;
+			int jiggle = jiggle_letter ? int(5*cos(dt/100 + float(++test)/text.length()) + 5): 0;
 			for (int j = 0; j < glyph->size(); j++)
 			{
 				if (maxWide < glyph->at(j).size())
@@ -773,15 +790,17 @@ void graphics::Graphics::drawText(std::string text, vec2i position, std::shared_
 
 				for (int i = 0; i < glyph->at(j).size(); i++)
 				{
-					K = safeIndex(i + position.x + offset, j + position.y, this->gwidth, this->gheight);
+					K = safeIndex(i + position.x + offsetx, j + position.y + jiggle+ offsety, this->width, this->height);
 					if (K > 0)
 					{
-						this->guiBuffer[K].Char.UnicodeChar = cp437_to_wchar(glyph->at(j).at(i));
-						this->guiBuffer[K].Attributes = attr;
+						this->gBuffer[K].Char.UnicodeChar = cp437_to_wchar(glyph->at(j).at(i).first);
+						this->gBuffer[K].Attributes = glyph->at(j).at(i).second;
 					}
 				}
 			}
-			offset += maxWide+3;
+			offsetx += maxWide+2;
+			attr = (attr % 7) + 8;
+			dt += 0.03;
 
 		}
 		SetConsoleOutputCP(temp);
