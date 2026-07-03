@@ -26,6 +26,7 @@
 #include "shapes/Line.h"
 #include "shapes/Point.h"
 #include "shapes/Cube.h"
+#include "shapes/Square.h"
 #include <vector>
 
 //normal graphics buffer
@@ -45,6 +46,8 @@ using namespace mathT;
 
 namespace graphics
 {
+
+	static const std::string distanceMap = "@$B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 	struct Triangle
 	{
 		vec3f vertices[3];
@@ -101,7 +104,9 @@ namespace graphics
 		int height, width;
 		int gheight, gwidth;
 		int dheight, dwidth;
-		
+		//quarter height, half width
+		double q_height, h_width;
+
 		HANDLE hConsole;
 		
 		//Get the console's handle and set up the graphics settings
@@ -109,7 +114,7 @@ namespace graphics
 
 		//BUFFER DATA
 		CHAR_INFO * gBuffer;
-		float* zBuffer;
+		double* zBuffer;
 		COORD gBufferSize;
 		COORD gBufferOffset;
 		SMALL_RECT gBufferRegion;
@@ -133,14 +138,21 @@ namespace graphics
 		void computeDepth();
 		bool pointInTriangle(vec2f p, Triangle t);
 		int safeIndex(int i, int j, int w = -1, int h = -1);
+
+
+		void debugCamera();
+
+
 	public:
 		Graphics(int h = HEIGHT, int w = WIDTH, int gw = GWIDTH, int gh = GHEIGHT, int dw = DWIDTH, int dh = DHEIGHT);
 		~Graphics();
 
+
+		//GETTERS
 		CHAR_INFO* getBuffer();
 		COORD getBufferSize();
 		COORD getBufferOffset();
-
+		Camera* getCamera();
 		//DRAWING FUNCTIONS FOR 2D PURPOSES
 		
 		//clear the buffer with the desired character and attributes (leave blank for blank canvas)
@@ -178,9 +190,8 @@ namespace graphics
 
 		// gui/debug functions
 
-		void printGui();
-
-		void printDebug();
+		void printGui(std::string msg, vec2i pos, unsigned int attr);
+		void printDebug(std::string msg, vec2i pos, unsigned int attr);
 
 		void updateInput();
 		//Write the buffer onto the console 

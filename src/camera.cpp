@@ -1,7 +1,7 @@
 #include "camera.h"
 
 Camera::Camera(int FOV, double cfar, double cnear) : FOV(FOV), cfar(cfar), cnear(cnear)
-, position(0, 0, 0), direction(0, 0, 1), right(0, 0, 0), up(0, 1, 0), sensitivity(1)
+, position(10, 0, 0), direction(0, 0, 1), right(0, 0, 0), up(0, 1, 0), sensitivity(1), speed(0.1)
 {
 	projection = mat4x4d();
 	view = identity4x4<double>();
@@ -10,8 +10,8 @@ Camera::Camera(int FOV, double cfar, double cnear) : FOV(FOV), cfar(cfar), cnear
 	projection[1][1] = S;
 
 	projection[2][2] = -cfar / (cfar - cnear);
-	projection[2][3] = -1;
 	projection[3][2] = -cfar * cnear / (cfar - cnear);
+	projection[2][3] = -1;
 }
 
 Camera::~Camera()
@@ -24,6 +24,23 @@ void Camera::setFOV(int f)
 	double S = 1 / tan(this->FOV * MPI / 360);
 	this->projection[0][0] = S;
 	this->projection[1][1] = S;
+}
+
+void Camera::setNear(double cn)
+{
+	this->cnear = cn;
+
+	projection[2][2] = -cfar / (cfar - cnear);
+	projection[2][3] = -1;
+	projection[3][2] = -cfar * cnear / (cfar - cnear);
+}
+
+void Camera::setFar(double cf)
+{
+	this->cfar = cf;
+	projection[2][2] = -cfar / (cfar - cnear);
+	projection[2][3] = -1;
+	projection[3][2] = -cfar * cnear / (cfar - cnear);
 }
 
 int Camera::getFOV()
@@ -72,20 +89,20 @@ void Camera::update()
 	//reset then update
 	float y = position.y;
 	if (GetAsyncKeyState(0x57) & 0x8000) //w
-		position += direction* 0.6;
+		position += direction* speed;
 	if (GetAsyncKeyState(0x53) & 0x8000) //s
-		position += direction*-0.6;
+		position += direction*-speed;
 	if (GetAsyncKeyState(0x41) & 0x8000) //A
-		position += right*0.6;  
+		position += right*speed;  
 	if (GetAsyncKeyState(0x44) & 0x8000) //D
-		position += right * -0.6;
+		position += right * -speed;
 	
 	//position.y = y;
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-		position += up*0.6;
+		position += up*speed;
 
 	if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
-		position += up * -0.6;
+		position += up * -speed;
 
 
 	direction.x = cos(angle.x) * cos(angle.y);
@@ -111,5 +128,5 @@ void Camera::update()
 	this->view[2][1] = this->direction.y;
   	this->view[2][2] = this->direction.z;
 
-	transformation::translate(this->view, this->position);
+	transformation::translate(this->view, this->position*-1);
 }

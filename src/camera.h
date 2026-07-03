@@ -10,6 +10,8 @@ private:
 	int FOV;
 	float sensitivity;
 	double cfar, cnear;
+	double speed;
+
 	mat4x4d projection;
 	mat4x4d view;
 	vec2d angle;
@@ -21,10 +23,13 @@ private:
 	vec3d up;
 
 public:
-	Camera(int FOV = 30, double cfar = 100, double cnear = 0.01);
+	Camera(int FOV = 120, double cfar = 100, double cnear = 1);
 	~Camera();
 
 	void setFOV(int f);
+	void setNear(double cn);
+	void setFar(double cf);
+
 	int getFOV();
 	double getfar() { return this->cfar; }
 	double getnear() { return this->cnear; }

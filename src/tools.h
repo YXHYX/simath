@@ -8,7 +8,10 @@
 #define HPI 1.5707963
 #define QPI 0.7853981
 
-//todo make quaternions
+//todo
+//		make quaternions done
+//		allow for more operations freedom (cte * vector and cte * matrix and vec * matrix)
+
 namespace mathT
 {
 	template<typename T> 
@@ -292,7 +295,6 @@ namespace mathT
 			this->z -= other.z;
 			this->w -= other.w;
 		}
-
 		void operator/=(T f)
 		{
 			if (f != 0)
@@ -1116,6 +1118,26 @@ namespace mathT
 		return sqrt(A.a * A.a + A.b * A.b + A.c * A.c + A.d * A.d);
 	}
 	template<typename T>
+	T norm1(vec2<T> A)
+	{
+		return abs(A.x)+ abs(A.y);
+	}
+	template<typename T>
+	T norm1(vec3<T> A)
+	{
+		return abs(A.x) + abs(A.y) + abs(A.z);
+	}
+	template<typename T>
+	T norm1(vec4<T> A)
+	{
+		return abs(A.x) + abs(A.y) + abs(A.z) + abs(A.w);
+	}
+	template<typename T>
+	T norm1(quat<T> A)
+	{
+		return abs(A.a) + abs(A.b) + abs(A.c) + abs(A.d);
+	}
+	template<typename T>
 	vec2<double> normalize(vec2<T> A)
 	{
 		if(A != vec2<T>(0,0))
@@ -1205,9 +1227,9 @@ namespace mathT
 		inline void translate(mat4x4d& mat, vec3d pos)
 		{
 			mat4x4d translation = identity4x4<double>();
-			translation[0][3] = -pos.x;
-			translation[1][3] = -pos.y;
-			translation[2][3] = -pos.z;
+			translation[0][3] = pos.x;
+			translation[1][3] = pos.y;
+			translation[2][3] = pos.z;
 			mat = mat*translation;
 		}
 		inline void scale(mat4x4d& mat, vec3d scale)

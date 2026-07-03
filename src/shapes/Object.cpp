@@ -9,16 +9,16 @@ void Object::loadVertices()
 Object::Object(vec3d position, vec3d rotation, vec3d scale)
 {
 	this->transform.setPosition(position);
-	this->transform.setPosition(rotation);
-	this->transform.setPosition(scale);
+	this->transform.setRotation(rotation);
+	this->transform.setScale(scale);
 }
 Object::~Object() 
 {
 
 }
 
-void Object::loadTexture(std::string path)
+void Object::loadTexture(std::string path, int dither)
 {
-	this->texture = std::make_shared<Texture>(path);
+	this->texture = std::make_shared<Texture>(path, dither);
 	this->texture->load();
 }

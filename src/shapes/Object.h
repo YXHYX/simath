@@ -36,6 +36,6 @@ public:
 	//virtual void render();
 
 	
-	void loadTexture(std::string path);
+	void loadTexture(std::string path, int dither = 0);
 
 };

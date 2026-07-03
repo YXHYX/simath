@@ -18,7 +18,7 @@ void Graphics::initialize()
 	this->gBufferRegion.Bottom = this->gBufferRegion.Top + this->gBufferSize.Y;
 
 	this->gBuffer = new CHAR_INFO[this->gBufferSize.X * this->gBufferSize.Y];
-	this->zBuffer = new float[this->gBufferSize.X * this->gBufferSize.Y];
+	this->zBuffer = new double[this->gBufferSize.X * this->gBufferSize.Y];
 
 
 	this->guiSize.X = this->gwidth;
@@ -53,6 +53,7 @@ void Graphics::initialize()
 //calculate depth buffer?
 void graphics::Graphics::computeDepth()
 {
+
 	//for triangles
 	for (auto e : triangles)
 	{
@@ -63,46 +64,51 @@ void graphics::Graphics::computeDepth()
 		// update it if its less than the one in the depth buffer
 
 		// set the attributes in the corresponding pixel in the g buffer
+
+		//remake this slow stuff, optimize it more and never look at it again
 		vec4d pp1(e.vertices[0].x, e.vertices[0].y, e.vertices[0].z, 1),
 			pp2(e.vertices[1].x, e.vertices[1].y, e.vertices[1].z, 1),
 			pp3(e.vertices[2].x, e.vertices[2].y, e.vertices[2].z, 1);
 
-		pp1 = *camera.getView() * pp1;
-		pp2 = *camera.getView() * pp2;
-		pp3 = *camera.getView() * pp3;
+		pp1 = (*camera.getView()) * pp1;
+		pp2 = (*camera.getView()) * pp2;
+		pp3 = (*camera.getView()) * pp3;
 		if (pp1.w != 1)
 			pp1 /= pp1.w;
 		if (pp2.w != 1)
 			pp2 /= pp2.w;
 		if (pp3.w != 1)
 			pp3 /= pp3.w;
-		pp1.w = 1;
-		pp2.w = 1;
-		pp3.w = 1;
+		
+		//needed for inverse interpolating and finding the z on a given point inside the triangle (using barycentric weights)
 		double z1 = pp1.z, z2 =pp2.z, z3 = pp3.z;
-		if (z1 <= 0 || z2 <= 0 || z3 <= 0)
-			continue;
+
+		//if any are behind the screen dont bother rendering
+		//if (z1 <= 0 && z2 <= 0 && z3 <= 0)
+			//continue;
+
+		//project on the screen plane
 		pp1 = *camera.getProjection() * pp1;
 		pp2 = *camera.getProjection() * pp2;
 		pp3 = *camera.getProjection() * pp3;
 		
-		if (pp1.w != 1)
+		if (pp1.w != 1 && pp1.w != 0)
 			pp1 /= pp1.w;
-		if (pp2.w != 1)
+		if (pp2.w != 1 && pp2.w != 0)
 			pp2 /= pp2.w;
-		if (pp3.w != 1)
+		if (pp3.w != 1 && pp3.w != 0)
 			pp3 /= pp3.w;
+
+
 		//recentering the projected point to raster space
+		pp1.x += h_width;
+		pp1.y = pp1.y / 2 + q_height;
 
-		pp1.x += width / 2;
-		pp1.y = pp1.y/2 +height/ 4;
+		pp2.x += h_width;
+		pp2.y = pp2.y / 2 + q_height;
 
-		pp2.x += width / 2;
-		pp2.y = pp2.y / 2 + height / 4;
-
-		pp3.x += width / 2;
-		pp3.y = pp3.y / 2 + height / 4;
-
+		pp3.x += h_width;
+		pp3.y = pp3.y / 2 + q_height;
 		//define a bounding box to do calculations more fast
 
 		//clipping happens here
@@ -112,12 +118,10 @@ void graphics::Graphics::computeDepth()
 
 		pmin.x = max(min(min(pp1.x, pp2.x), pp3.x), 0);
 		pmin.y = max(min(min(pp1.y, pp2.y), pp3.y), 0);
-	
-		//make sure the bounding box is set correctly, otherwise ignore triangle (most likely behind the camera)
-		if (pmin.x >= pmax.x-1 || pmin.y >= pmax.y-1)
-			continue;
 
 		double denominator = ((pp2.y - pp3.y) * (pp1.x - pp3.x) + (pp3.x - pp2.x) * (pp1.y - pp3.y));
+		if (denominator == 0)
+			continue;
 		for (int i = pmin.x; i <= pmax.x; i++)
 		{
 			for (int j = pmin.y; j <= pmax.y; j++)
@@ -135,13 +139,13 @@ void graphics::Graphics::computeDepth()
 					//retrieve the z coordinate of the point of the projected point thru interpolation?
 					float w1 = a / z1, w2 = b / z2, w3 = c / z3;
 					float z = 1 / (w1 + w2 + w3);
-					if (z <= 0)
+					if (z < 0)
 						continue;
 					//make sure the index is not exceeding the limited space
 					int K = safeIndex(i, j);
 					if (K != -1)
 					{	//if its the closest triangle to the screen, render it
-						if (this->zBuffer[K] > z)
+						if (this->zBuffer[K] >= z)
 						{
 							this->zBuffer[K] = z;
 							this->gBuffer[K].Char.UnicodeChar = e.Char;
@@ -151,7 +155,7 @@ void graphics::Graphics::computeDepth()
 							if (e.texture.get())
 							{
 								vec2f uv = (e.texcoords[0] * w1 + e.texcoords[1] * w2 + e.texcoords[2] * w3) * z;
-								this->gBuffer[K].Char.UnicodeChar = e.Char;
+								this->gBuffer[K].Char.UnicodeChar = this->getDepth(z, e.attr).x;// e.Char;
 								this->gBuffer[K].Attributes = e.texture->getPixel(uv.x, uv.y);
 							}
 						}
@@ -163,8 +167,62 @@ void graphics::Graphics::computeDepth()
 	//for lines
 	for(auto e: this->lines)
 	{
+		vec4d p1(-e.getP1().x, -e.getP1().y, -e.getP1().z, 1);
+		vec4d p2(-e.getP2().x, -e.getP2().y, -e.getP2().z, 1);
+		p1 = *camera.getView() * p1;
+		p2 = *camera.getView() * p2;
 
+		if (p1.w != 1)
+			p1 /= p1.w;
+		if (p2.w != 1)
+			p2 /= p2.w;
+
+		float z1 = p1.z, z2 = p2.z;
+		if (z1 < 0 || z2 < 0)
+			continue;
+
+
+		p1 = *camera.getProjection() * p1;
+		p2 = *camera.getProjection() * p2;
+		
+		if (p1.w != 1)
+			p1 /= p1.w;
+		if (p2.w != 1)
+			p2 /= p2.w;
+
+		p1.x += h_width;
+		p1.y = p1.y / 2 + q_height;
+		
+		p2.x += h_width;
+		p2.y = p2.y / 2 + q_height;
+
+		vec2i maxp(min(max(p1.x,p2.x),width), min(max(p1.y, p2.y),height)), minp(max(min(p1.x, p2.x),0), max(min(p1.y, p2.y),0));
+		if (minp.x >= width || minp.y >= height || maxp.x < 0 || maxp.y < 0)
+			continue;
+
+		//instead of a bounding box like triangles, better to parametrically slide through the line by a parameter lambda
+		int numPoints = norm<float>(maxp-minp);
+		
+		for (int r = 0; r <= numPoints; r++)
+		{
+			float lambda = float(r) / numPoints;
+			vec4d point = p1 * lambda + p2 * (1 - lambda);
+
+			float z = 1/((1-lambda)/z2 + lambda/z1);
+			if ((point.x < 0 || point.x > width) || (point.y < 0 || point.y > height) || z < 0)
+				continue;
+
+			int K = safeIndex(point.x, point.y);
+			if (K > 0)
+				if (this->zBuffer[K] > z)
+				{
+					//filter the depth
+					this->gBuffer[K].Attributes = e.getColor();// this->getDepth(z, e.getColor()).y;
+					this->gBuffer[K].Char.AsciiChar = e.getCharacter();//this->getDepth(z, e.getColor()).x;
+				}
+		}
 	}
+
 
 	//for points
 	for (auto e : this->points)
@@ -181,8 +239,8 @@ void graphics::Graphics::computeDepth()
 		if (point.w != 1)
 			point /= point.w;
 
-		point.x += width / 2;
-		point.y = point.y / 2 + height / 4;
+		point.x += h_width;
+		point.y = point.y / 2 + q_height;
 		
 		if (point.x >= width || point.y >= height || point.x < 0 || point.y < 0)
 			continue;
@@ -191,8 +249,9 @@ void graphics::Graphics::computeDepth()
 			if (this->zBuffer[K] > z)
 			{
 				//filter the depth
-				this->gBuffer[K].Attributes = this->getDepth(z, e.getColor()).y;
-				this->gBuffer[K].Char.AsciiChar = this->getDepth(z,e.getColor()).x;//e.getCharacter();
+				vec2u charCol= this->getDepth(z, e.getColor());
+				this->gBuffer[K].Attributes = charCol.y;
+				this->gBuffer[K].Char.AsciiChar = charCol.x;//e.getCharacter();
 			}
 	}
 }
@@ -221,10 +280,34 @@ int graphics::Graphics::safeIndex(int i, int j, int w, int h)
 		return -1;
 }
 
+void graphics::Graphics::debugCamera()
+{
+	this->printDebug("POSITION", vec2i(2, 1), Colors::B_WHITE);
+	this->printDebug("X: "+std::to_string(this->camera.getPosition().x), vec2i(2, 2), Colors::WHITE);
+	this->printDebug("Y: " + std::to_string(this->camera.getPosition().y), vec2i(2, 3), Colors::WHITE);
+	this->printDebug("Z: " + std::to_string(this->camera.getPosition().z), vec2i(2, 4), Colors::WHITE);
+
+	this->printDebug("DIRECTION", vec2i(2, 5), Colors::B_WHITE);
+	this->printDebug("X: " + std::to_string(this->camera.getDirection().x), vec2i(2, 6), Colors::WHITE);
+	this->printDebug("Y: " + std::to_string(this->camera.getDirection().y), vec2i(2, 7), Colors::WHITE);
+	this->printDebug("Z: " + std::to_string(this->camera.getDirection().z), vec2i(2, 8), Colors::WHITE);
+
+
+	this->printDebug("PARAMETERS", vec2i(2, 10), Colors::B_WHITE);
+	this->printDebug("NEAR: " + std::to_string(this->camera.getnear()), vec2i(2, 11), Colors::WHITE);
+	this->printDebug("FAR: " + std::to_string(this->camera.getfar()), vec2i(2, 12), Colors::WHITE);
+	this->printDebug("FOV: " + std::to_string(this->camera.getFOV()), vec2i(2, 13), Colors::WHITE);
+
+}
+
 Graphics::Graphics(int h, int w, int gw, int gh, int dw, int dh)
 	: height(h), width(w), gwidth(gw), gheight(gh), dwidth(dw), dheight(dh)
 {
 	this->initialize();
+	//stupid optimization
+	this->q_height = height / 4.0;
+	this->h_width = width / 2.0;
+
 	
 }
 
@@ -249,6 +332,12 @@ COORD Graphics::getBufferSize()
 COORD Graphics::getBufferOffset()
 {
 	return this->gBufferOffset;
+}
+
+Camera* graphics::Graphics::getCamera()
+{
+	return &this->camera;
+	
 }
 
 void graphics::Graphics::clearBuffer(char c, unsigned short attr)
@@ -497,46 +586,7 @@ vec2u graphics::Graphics::getDepth(float z, unsigned short attr)
 	char c = ' ';
 	unsigned short at = attr;
 
-	if (z >= 0 && z < 5)
-		c = '.';
-	if (z >= 5 && z < 10)
-		c = ':';
-	if (z >= 10 && z < 20)
-		c = 'i';
-	if (z >= 40 && z < 60)
-		c = 'k';
-	if (z >= 60 && z < 80)
-		c = 'W';
-	if (z >= 80 && z < 100)
-		c = '@';
-	
-	if (z >= 100 && z < 120)
-		c = '@';
-	if (z >= 120 && z < 140)
-		c = 'W';
-	if (z >= 140 && z < 160)
-		c = 'k';
-	if (z >= 160 && z < 180)
-		c = 'i';
-	if (z >= 180 && z < 200)
-		c = ':';
-	if (z >= 200)
-		c = '.';
-
-	unsigned short upper, lower, color = attr;
-
-	if((attr & 0xFF00) == 0)
-	{
-		color = attr;
-	}
-	if ((attr & 0x00FF) == 0)
-	{
-		color = attr >> 4;
-	}
-	if (z >= 100)
-		at = color;
-	if (z < 100)
-		at = color << 4;
+	c = distanceMap.at(abs(z) < 1.f ? 0 : int(min(abs(z)/2,69)));
 	return vec2u(c, at);
 }
 
@@ -634,6 +684,25 @@ void graphics::Graphics::drawContour(int thickness, char c, unsigned short attr)
 	}
 }
 
+void graphics::Graphics::printGui(std::string msg, vec2i pos, unsigned int attr)
+{
+
+	for(int i = 0; i < msg.size(); i++)
+	{
+		this->guiBuffer[(pos.y + (pos.x+i)/ this->guiSize.X)*this->guiSize.X + (pos.x +i)% this->guiSize.X].Char.AsciiChar = msg[i];
+		this->guiBuffer[(pos.y + (pos.x + i) / this->guiSize.X) * this->guiSize.X + (pos.x + i) % this->guiSize.X].Attributes = attr;
+	}
+}
+void graphics::Graphics::printDebug(std::string msg, vec2i pos, unsigned int attr)
+{
+
+	for (int i = 0; i < msg.size(); i++)
+	{
+		this->debugBuffer[(pos.y + (pos.x + i) / this->debugSize.X) * this->debugSize.X + (pos.x + i) % this->debugSize.X].Char.AsciiChar = msg[i];
+		this->debugBuffer[(pos.y + (pos.x + i) / this->debugSize.X) * this->debugSize.X + (pos.x + i) % this->debugSize.X].Attributes = attr;
+	}
+}
+
 void graphics::Graphics::updateInput()
 {
 	//translation component
@@ -642,7 +711,9 @@ void graphics::Graphics::updateInput()
 
 	//rotate axis/angle
 	//this->camera.rotate(vec3d(1, 0, 1), MPI / 2 + 30 * dt);
-	this->camera.setFOV(40);
+	this->camera.setFOV(60);
+	this->camera.setNear(0.01);
+	this->camera.setFar(10);
 	camera.update();
 	dt += 0.001f;
 }
@@ -656,6 +727,7 @@ void Graphics::render()
 void graphics::Graphics::display()
 {
 	this->drawContour(1, ' ', Colors::B_WHITE);
+	this->debugCamera();
 
 	if (WriteConsoleOutput(this->hConsole, this->gBuffer, this->gBufferSize, this->gBufferOffset, &this->gBufferRegion) != 0)
 	{

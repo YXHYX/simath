@@ -4,6 +4,8 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
+#include <format>
 #include "tools.h"
 /*
 * [{"hex":"#ff0000"},{"hex":"#00ff00"},{"hex":"#0000ff"},{"hex":"#ffff00"},{"hex":"#ff00ff"},{"hex":"#00ffff"},{"hex":"#c6c6c6"},{"hex":"#ffffff"},{"hex":"#000000"},{"hex":"#808080"},{"hex":"#7f0000"},{"hex":"#007f00"},{"hex":"#00007f"},{"hex":"#7f7f00"},{"hex":"#7f007f"},{"hex":"#007f7f"}]
@@ -54,7 +56,6 @@ namespace graphics
 		B_GOLD = 0x00E0,
 		B_WHITE = 0x00F0,
 	};
-
 }
 const mathT::vec3uc FIXED_COLORS[16] =
 {
@@ -79,11 +80,14 @@ const mathT::vec3uc FIXED_COLORS[16] =
 class Texture
 {
 private:
+	int dither = 0;
     unsigned short colorMap(unsigned char r, unsigned char g, unsigned char b);
 public:
     std::string path;
+	//copy constructor
     Texture(const Texture* t);
-    Texture(std::string p);
+	// p path to texture, d dithering option ( 0 = nothing, 1 = floyd steinberg, 2 = bayer ordered 4x4)
+    Texture(std::string p, int d = 0);
     Texture();
     void load();
     virtual ~Texture();
