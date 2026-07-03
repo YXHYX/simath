@@ -72,9 +72,9 @@ namespace graphics
 		{
 			int i = this->texture.use_count();
 		}
-		void setTexture(Texture const& t)
+		void setTexture(std::shared_ptr<Texture> te)
 		{
-			this->texture = std::make_shared<Texture>(&t);
+			this->texture = te;
 		}
 		void setTexCoords(vec2f x, vec2f y, vec2f z)
 		{
@@ -93,6 +93,11 @@ namespace graphics
 		//LINE AT TOP
 		LTOP = 0x0200
 	};
+
+	struct Pixel {
+		char c,fr,fg,b;
+	};
+
 	class Graphics
 	{
 	private:
@@ -139,7 +144,7 @@ namespace graphics
 		bool pointInTriangle(vec2f p, Triangle t);
 		int safeIndex(int i, int j, int w = -1, int h = -1);
 
-
+		void setPixelColor(char r,char g,char b, bool fb);
 		void debugCamera();
 
 
@@ -184,7 +189,7 @@ namespace graphics
 		// drawing functions for 3D
 
 		vec2u getDepth(float z, unsigned short attr);
-		void drawObject(Object& obj, char c, unsigned short attr);
+		void drawObject(std::shared_ptr<Object> obj, char c, unsigned short attr);
 		void drawLine(Line l);
 		void drawPoint(Point p);
 

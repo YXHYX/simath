@@ -45,6 +45,7 @@ public:
 	{
 		return &this->view;
 	}
+	vec3d getRelativePos(vec3d pos);
 	mat4x4d* getProjection()
 	{
 		return &this->projection;

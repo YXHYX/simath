@@ -1,7 +1,7 @@
 #include "camera.h"
 
 Camera::Camera(int FOV, double cfar, double cnear) : FOV(FOV), cfar(cfar), cnear(cnear)
-, position(10, 0, 0), direction(0, 0, 1), right(0, 0, 0), up(0, 1, 0), sensitivity(1), speed(0.1)
+, position(10, 0, 0), direction(0, 0, 1), right(0, 0, 0), up(0, 1, 0), sensitivity(1.4), speed(0.1)
 {
 	projection = mat4x4d();
 	view = identity4x4<double>();
@@ -12,6 +12,7 @@ Camera::Camera(int FOV, double cfar, double cnear) : FOV(FOV), cfar(cfar), cnear
 	projection[2][2] = -cfar / (cfar - cnear);
 	projection[3][2] = -cfar * cnear / (cfar - cnear);
 	projection[2][3] = -1;
+	this->angle.x = -MPI;
 }
 
 Camera::~Camera()
@@ -71,39 +72,41 @@ vec3d Camera::getDirection()
 void Camera::update()
 {
 
-	//update input
-	if (GetAsyncKeyState(VK_NUMPAD8) & 0x8000)
-		this->angle.y += 0.01* sensitivity;
-	if (GetAsyncKeyState(VK_NUMPAD5) & 0x8000)
-		this->angle.y -= 0.01 * sensitivity;
+	//if (GetFocus() == GetStdHandle(STD_OUTPUT_HANDLE))
+	{
+		//update input
+		if (GetAsyncKeyState(VK_NUMPAD8) & 0x8000)
+			this->angle.y += 0.01* sensitivity;
+		if (GetAsyncKeyState(VK_NUMPAD5) & 0x8000)
+			this->angle.y -= 0.01 * sensitivity;
 
-	if (GetAsyncKeyState(VK_NUMPAD6) & 0x8000)
-		this->angle.x += 0.01 * sensitivity;
-	if (GetAsyncKeyState(VK_NUMPAD4) & 0x8000)
-		this->angle.x -= 0.01 * sensitivity;
-	if (angle.y > HPI)
-		angle.y = HPI;
-	if (angle.y < -HPI)
-		angle.y = -HPI;
-	//update the direction
-	//reset then update
-	float y = position.y;
-	if (GetAsyncKeyState(0x57) & 0x8000) //w
-		position += direction* speed;
-	if (GetAsyncKeyState(0x53) & 0x8000) //s
-		position += direction*-speed;
-	if (GetAsyncKeyState(0x41) & 0x8000) //A
-		position += right*speed;  
-	if (GetAsyncKeyState(0x44) & 0x8000) //D
-		position += right * -speed;
+		if (GetAsyncKeyState(VK_NUMPAD6) & 0x8000)
+			this->angle.x += 0.01 * sensitivity;
+		if (GetAsyncKeyState(VK_NUMPAD4) & 0x8000)
+			this->angle.x -= 0.01 * sensitivity;
+		if (angle.y > HPI)
+			angle.y = HPI;
+		if (angle.y < -HPI)
+			angle.y = -HPI;
+		//update the direction
+		//reset then update
+		float y = position.y;
+		if (GetAsyncKeyState(0x57) & 0x8000) //w
+			position += direction* speed;
+		if (GetAsyncKeyState(0x53) & 0x8000) //s
+			position += direction*-speed;
+		if (GetAsyncKeyState(0x41) & 0x8000) //A
+			position += right*speed;  
+		if (GetAsyncKeyState(0x44) & 0x8000) //D
+			position += right * -speed;
 	
-	//position.y = y;
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-		position += up*speed;
+		//position.y = y;
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+			position += up*speed;
 
-	if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
-		position += up * -speed;
-
+		if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
+			position += up * -speed;
+	}
 
 	direction.x = cos(angle.x) * cos(angle.y);
 	direction.y = sin(angle.y);
@@ -129,4 +132,11 @@ void Camera::update()
   	this->view[2][2] = this->direction.z;
 
 	transformation::translate(this->view, this->position*-1);
+}
+
+vec3d Camera::getRelativePos(vec3d p)
+{
+	vec4d rp = this->view*vec4d(p.x, p.y, p.z,1);
+	rp /= rp.w;
+	return vec3d(rp.x,rp.y,rp.z);
 }

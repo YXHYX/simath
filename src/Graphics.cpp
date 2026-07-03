@@ -5,6 +5,29 @@ using namespace graphics;
 void Graphics::initialize()
 {
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	// set output mode to handle virtual terminal sequences
+	if (this->hConsole == INVALID_HANDLE_VALUE)
+	{
+		throw GetLastError();
+	}
+
+	DWORD dwMode = 0;
+	if (!GetConsoleMode(this->hConsole, &dwMode))
+	{
+		throw GetLastError();
+	}
+
+	dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+	if (!SetConsoleMode(this->hConsole, dwMode))
+	{
+		throw GetLastError();
+	}
+	
+	//Set up fullscreen mode in the old win32 api ( DEPRECATED AND NOT USED FOR WIN11 !) 
+	COORD size{ 0 };
+	if (!SetConsoleDisplayMode(this->hConsole, CONSOLE_FULLSCREEN_MODE, &size))
+		throw GetLastError();
+
 
 	this->gBufferSize.X = this->width;
 	this->gBufferSize.Y = this->height;
@@ -84,8 +107,8 @@ void graphics::Graphics::computeDepth()
 		double z1 = pp1.z, z2 =pp2.z, z3 = pp3.z;
 
 		//if any are behind the screen dont bother rendering
-		//if (z1 <= 0 && z2 <= 0 && z3 <= 0)
-			//continue;
+		if (z1 <= 0 && z2 <= 0 && z3 <= 0)
+			continue;
 
 		//project on the screen plane
 		pp1 = *camera.getProjection() * pp1;
@@ -167,8 +190,8 @@ void graphics::Graphics::computeDepth()
 	//for lines
 	for(auto e: this->lines)
 	{
-		vec4d p1(-e.getP1().x, -e.getP1().y, -e.getP1().z, 1);
-		vec4d p2(-e.getP2().x, -e.getP2().y, -e.getP2().z, 1);
+		vec4d p1(e.getP1().x, e.getP1().y, e.getP1().z, 1);
+		vec4d p2(e.getP2().x, e.getP2().y, e.getP2().z, 1);
 		p1 = *camera.getView() * p1;
 		p2 = *camera.getView() * p2;
 
@@ -197,15 +220,27 @@ void graphics::Graphics::computeDepth()
 		p2.y = p2.y / 2 + q_height;
 
 		vec2i maxp(min(max(p1.x,p2.x),width), min(max(p1.y, p2.y),height)), minp(max(min(p1.x, p2.x),0), max(min(p1.y, p2.y),0));
-		if (minp.x >= width || minp.y >= height || maxp.x < 0 || maxp.y < 0)
-			continue;
+		
+		//no
+		//if (minp.x >= width || minp.y >= height || maxp.x < 0 || maxp.y < 0)
+			//continue;
 
 		//instead of a bounding box like triangles, better to parametrically slide through the line by a parameter lambda
-		int numPoints = norm<float>(maxp-minp);
+		int numPoints = norm1<float>(maxp-minp);
+		//max boundaries for l
+		/*float lx0, ly0, lx1, ly1;
 		
+		if (minp.x)
+		lx0 = p2.x / (p2.x - p1.x);
+		
+		ly0 = p2.y / (p2.y - p1.y);
+		lx1 = (p2.x - width) / (p2.x - p1.x);
+		ly1 = (p2.y - height) / (p2.y - p1.y);
+		*/
 		for (int r = 0; r <= numPoints; r++)
 		{
 			float lambda = float(r) / numPoints;
+			
 			vec4d point = p1 * lambda + p2 * (1 - lambda);
 
 			float z = 1/((1-lambda)/z2 + lambda/z1);
@@ -278,6 +313,12 @@ int graphics::Graphics::safeIndex(int i, int j, int w, int h)
 		return j * w + i;
 	else
 		return -1;
+}
+
+void graphics::Graphics::setPixelColor(char r, char g, char b, bool fb)
+{
+
+	//[38; 2; r; g; bm
 }
 
 void graphics::Graphics::debugCamera()
@@ -586,31 +627,31 @@ vec2u graphics::Graphics::getDepth(float z, unsigned short attr)
 	char c = ' ';
 	unsigned short at = attr;
 
-	c = distanceMap.at(abs(z) < 1.f ? 0 : int(min(abs(z)/2,69)));
+	c = distanceMap.at(abs(z) < 1.f ? 69 : int(max(min(69-abs(z)/2,69),0)));
 	return vec2u(c, at);
 }
 
-void graphics::Graphics::drawObject(Object& obj, char c, unsigned short attr)
+void graphics::Graphics::drawObject(std::shared_ptr<Object> obj, char c, unsigned short attr)
 {
-	for (int i = 0; i < obj.indices.size()/3; i++)
+	for (int i = 0; i < obj->indices.size()/3; i++)
 	{
-		int K = obj.indices[i * 3], L = obj.indices[i * 3 + 1], M = obj.indices[i * 3 + 2];
+		int K = obj->indices[i * 3], L = obj->indices[i * 3 + 1], M = obj->indices[i * 3 + 2];
 
 		// calculate model * vertex;
 		vec4d pp1, pp2, pp3;
-		pp1.x = obj.vertices[K].x, pp1.y = obj.vertices[K].y, pp1.z = obj.vertices[K].z, pp1.w = 1;
-		pp2.x = obj.vertices[L].x, pp2.y = obj.vertices[L].y, pp2.z = obj.vertices[L].z, pp2.w = 1;
-		pp3.x = obj.vertices[M].x, pp3.y = obj.vertices[M].y, pp3.z = obj.vertices[M].z, pp3.w = 1;
+		pp1.x = obj->vertices[K].x, pp1.y = obj->vertices[K].y, pp1.z = obj->vertices[K].z, pp1.w = 1;
+		pp2.x = obj->vertices[L].x, pp2.y = obj->vertices[L].y, pp2.z = obj->vertices[L].z, pp2.w = 1;
+		pp3.x = obj->vertices[M].x, pp3.y = obj->vertices[M].y, pp3.z = obj->vertices[M].z, pp3.w = 1;
 
-		pp1 = obj.transform.model * pp1;
-		pp2 = obj.transform.model * pp2;
-		pp3 = obj.transform.model * pp3;
+		pp1 = obj->transform.model * pp1;
+		pp2 = obj->transform.model * pp2;
+		pp3 = obj->transform.model * pp3;
 
 		Triangle t(vec3f(pp1.x, pp1.y, pp1.z), vec3f(pp2.x, pp2.y, pp2.z), vec3f(pp3.x, pp3.y, pp3.z));
-		t.setTexture(*obj.texture);
-		t.setTexCoords(obj.texcoords[i * 3], obj.texcoords[i * 3 + 1], obj.texcoords[i * 3 + 2]);
+		t.setTexture(obj->texture);
+		t.setTexCoords(obj->texcoords[i * 3], obj->texcoords[i * 3 + 1], obj->texcoords[i * 3 + 2]);
 		t.Char = c;
-		t.attr = obj.colors[i];
+		t.attr = obj->colors[i];
 		
 		this->triangles.push_back(t);	
 	}
@@ -705,13 +746,7 @@ void graphics::Graphics::printDebug(std::string msg, vec2i pos, unsigned int att
 
 void graphics::Graphics::updateInput()
 {
-	//translation component
-	//this->camera.setPosition(vec3d(30 * cos(MPI / 2 - 30 * dt), 0, 30*sin(MPI / 2 - 30 * dt)));
-	//this->camera.setPosition(vec3d(0, 0, -10));
-
-	//rotate axis/angle
-	//this->camera.rotate(vec3d(1, 0, 1), MPI / 2 + 30 * dt);
-	this->camera.setFOV(60);
+	this->camera.setFOV(50);
 	this->camera.setNear(0.01);
 	this->camera.setFar(10);
 	camera.update();

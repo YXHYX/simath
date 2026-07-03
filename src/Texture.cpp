@@ -109,9 +109,9 @@ void Texture::load()
                 mathT::vec3f mappedPixel(FIXED_COLORS[colorMap(data[ind], data[ind + 1], data[ind + 2])]);
                 mathT::vec3f err(data[ind] - mappedPixel.x, data[ind + 1] - mappedPixel.y, data[ind + 2] - mappedPixel.z);
 
-                err.x = abs(err.x);
-                err.y = abs(err.y);
-                err.z = abs(err.z);
+                //err.x = abs(err.x);
+                //err.y = abs(err.y);
+                //err.z = abs(err.z);
                 this->data[ind] = mappedPixel.x;
                 this->data[ind + 1] = mappedPixel.y;
                 this->data[ind + 2] = mappedPixel.z;
@@ -163,17 +163,18 @@ void Texture::load()
         for (int j = 0; j < height; j++)
         {
             int ind = j * width + i;
+            mathT::vec3f mappedPixel(FIXED_COLORS[colorMap(data[ind], data[ind + 1], data[ind + 2])]);
             this->reducedData[ind] = colorMap(data[ind * channels], data[ind * channels + 1], data[ind * channels + 2]) << 4;
         }
 
     stbi_image_free(this->data);
+    this->data = nullptr;
 }
 
 Texture::~Texture()
 {
-    //this->path.clear();
-    //stbi_image_free(data);
-    //delete[] this->reducedData;
+    this->path.clear();
+    delete[] this->reducedData;
 }
 
 unsigned short Texture::getPixel(float x, float y)
