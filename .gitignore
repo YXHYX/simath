@@ -55,6 +55,10 @@ nunit-*.xml
 [Rr]eleasePS/
 dlldata.c
 
+#python build files
+dist/
+build/
+
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
 
