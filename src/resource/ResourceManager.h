@@ -4,6 +4,7 @@
 #include "../Texture.h"
 #include "Sound.h"
 
+
 #include <map>
 #include <string>
 
@@ -40,6 +41,14 @@ private:
 	std::map<std::string, std::shared_ptr<Object>> objects;
 	std::map<std::string, std::shared_ptr<Texture>> textures;
 	std::map<std::string, std::shared_ptr<Sound>> sounds;
+
+
+	//sound manager
+	ALCdevice* soundDevice;
+	ALCcontext* soundContext;
+	const ALCchar* deviceName;
+	void initializeSound();
+	void setSoundListener();
 public:
 
 	ResourceManager();
@@ -59,6 +68,7 @@ public:
 
 	std::shared_ptr<Texture> getTexture(std::string name);
 	std::shared_ptr<Object> getObject(std::string name);
+	std::shared_ptr<Sound> getSound(std::string name);
 
 
 };
