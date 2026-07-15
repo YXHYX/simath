@@ -43,16 +43,18 @@ void benchmark_demo()
 
 		//set positions
 
-		//draw objects
-		for (float i = 0; i < maxObjects; i++){
-			resourceManager.getObject("o" + std::to_string(int(i)))->transform.setRotation(vec3f(totalTime)+vec3f(i/maxObjects, -i / maxObjects, i / maxObjects));
-			resourceManager.getObject("o" + std::to_string(int(i)))->transform.setPosition(
-				vec3f(30,30,30) + vec3f(10 * cos(totalTime+6*i / maxObjects), 10 * sin(totalTime - 6 * i / maxObjects), -10 * cos(totalTime + 6 * i / maxObjects)));
-		}
 
-		//draw objects
-		for (int i = 0; i < maxObjects; i++)
-			graph.drawObject(resourceManager.getObject("o" + std::to_string(i)), ' ', 0);
+		//set positions
+		float factor = int(4 * cos(totalTime) + 5);
+		float scale = 10;
+		//translation
+		for (float i = 0; i < factor * maxObjects; i++) {
+			resourceManager.getObject("o" + std::to_string(int(i) % maxObjects))->transform.setRotation(vec3f(i / maxObjects + totalTime, -i / maxObjects + totalTime / 4, i / maxObjects + totalTime / 2));
+			resourceManager.getObject("o" + std::to_string(int(i) % maxObjects))->transform.setPosition(
+				vec3f(30, 30, 30) + vec3f(scale * sin(totalTime) * cos(cos(totalTime) + DPI * i / (factor * maxObjects)), scale * sin(totalTime) * sin(cos(totalTime) - DPI * i / (factor / 2 * maxObjects)), -scale * sin(totalTime) * cos(sin(totalTime) + DPI * i / maxObjects)));
+
+			graph.drawObject(resourceManager.getObject("o" + std::to_string(int(i) % maxObjects)), ' ', 0);
+		}
 
 		//render everything
 		graph.render();

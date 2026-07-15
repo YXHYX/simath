@@ -10,3 +10,6 @@ void video_player_demo();
 void mandelbrot_demo();
 void physics_demo();
 void benchmark_demo();
+void font_display_demo();
+void sound_demo();
+void model_demo();
