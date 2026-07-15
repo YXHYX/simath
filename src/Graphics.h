@@ -40,6 +40,8 @@
 #define DHEIGHT 130
 #define DWIDTH 70
 
+
+#define MAX_CLIP_DISTANCE 10000
 //#define GRAPHICS_DEBUG
 
 using namespace mathT;

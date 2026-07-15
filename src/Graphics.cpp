@@ -142,6 +142,9 @@ void graphics::Graphics::computeDepth()
 		pmin.x = max(min(min(pp1.x, pp2.x), pp3.x), 0);
 		pmin.y = max(min(min(pp1.y, pp2.y), pp3.y), 0);
 
+		//necessary
+		if (pp1.z <= 0 || pp2.z < 0 || pp3.z < 0)
+			continue;
 		double denominator = ((pp2.y - pp3.y) * (pp1.x - pp3.x) + (pp3.x - pp2.x) * (pp1.y - pp3.y));
 		if (denominator == 0)
 			continue;
@@ -649,9 +652,10 @@ void graphics::Graphics::drawObject(std::shared_ptr<Object> obj, char c, unsigne
 
 		Triangle t(vec3f(pp1.x, pp1.y, pp1.z), vec3f(pp2.x, pp2.y, pp2.z), vec3f(pp3.x, pp3.y, pp3.z));
 		t.setTexture(obj->texture);
-		t.setTexCoords(obj->texcoords[i * 3], obj->texcoords[i * 3 + 1], obj->texcoords[i * 3 + 2]);
+		if(!obj->texcoords.empty())
+			t.setTexCoords(obj->texcoords.at(i * 3), obj->texcoords.at(i * 3 + 1), obj->texcoords.at(i * 3 + 2));
 		t.Char = c;
-		t.attr = obj->colors[i];
+		t.attr = obj->colors.at(i);
 		
 		this->triangles.push_back(t);	
 	}
@@ -830,7 +834,7 @@ void graphics::Graphics::updateInput()
 {
 	this->camera.setFOV(50);
 	this->camera.setNear(0.01);
-	this->camera.setFar(10);
+	this->camera.setFar(100);
 	camera.update();
 	dt += 0.001f;
 }

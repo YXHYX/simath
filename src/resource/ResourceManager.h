@@ -1,6 +1,6 @@
 #pragma once
 //resources to be managed
-#include "../shapes/Object.h"
+#include "../shapes/Model.h"
 #include "Texture.h"
 #include "Sound.h"
 #include "font.h"

@@ -99,7 +99,7 @@ void Camera::update()
 			position += right*speed;  
 		if (GetAsyncKeyState(0x44) & 0x8000) //D
 			position += right * -speed;
-	
+		position.y  =y;
 		//position.y = y;
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 			position += up*speed;

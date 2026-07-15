@@ -33,7 +33,8 @@
 *			alongside for better results
 *	- resource manager
 *		- texture manager						done
-*		- models ( if need for any)				prob wont be done
+*		- models ( if need for any)				can be done but need for specific triangular models only
+*												which i will have to design
 *		- sounds manager						sorta done
 
 
@@ -47,5 +48,5 @@ its done but dawg shit ui, maybe add launcher using imGUI instead?
 */
 
 int main() {
-	font_display_demo();
+	model_demo();
 }
