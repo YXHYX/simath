@@ -123,13 +123,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)include\ffmpeg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>openal32.lib;sndfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>openal32.lib;sndfile.lib;avcodecd.lib;avformatd.lib;swresampled.lib;swscaled.lib;avutild.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\pear\source\repos\simath\lib;C:\Users\pear\source\repos\simath\lib\ffmpegd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,22 +141,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)include\ffmpeg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>openal32.lib;sndfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>openal32.lib;sndfile.lib;avcodec.lib;avformat.lib;swresample.lib;swscale.lib;avutil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\pear\source\repos\simath\lib\ffmpeg;C:\Users\pear\source\repos\simath\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="examples\benchmark_demo.cpp" />
     <ClCompile Include="examples\controller_demo.cpp" />
     <ClCompile Include="examples\font_display_demo.cpp" />
+    <ClCompile Include="examples\model_demo.cpp" />
     <ClCompile Include="examples\sound_demo.cpp" />
     <ClCompile Include="examples\video_player_demo.cpp" />
+    <ClCompile Include="src\shapes\Model.cpp" />
     <ClCompile Include="src\fizix_control\LQRController.cpp" />
     <ClCompile Include="src\shapes\SpringShape.cpp" />
     <ClCompile Include="src\game\entities\entity.cpp" />
@@ -191,6 +196,151 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="examples\example_demos.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\ac3_parser.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\adts_parser.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\avcodec.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\avdct.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\bsf.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\codec.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\codec_desc.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\codec_id.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\codec_par.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\d3d11va.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\defs.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\dirac.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\dv_profile.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\dxva2.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\exif.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\jni.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\mediacodec.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\packet.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\qsv.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\smpte_436m.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\vdpau.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\version.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\version_major.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\videotoolbox.h" />
+    <ClInclude Include="include\ffmpeg\libavcodec\vorbis_parser.h" />
+    <ClInclude Include="include\ffmpeg\libavdevice\avdevice.h" />
+    <ClInclude Include="include\ffmpeg\libavdevice\version.h" />
+    <ClInclude Include="include\ffmpeg\libavdevice\version_major.h" />
+    <ClInclude Include="include\ffmpeg\libavfilter\avfilter.h" />
+    <ClInclude Include="include\ffmpeg\libavfilter\buffersink.h" />
+    <ClInclude Include="include\ffmpeg\libavfilter\buffersrc.h" />
+    <ClInclude Include="include\ffmpeg\libavfilter\version.h" />
+    <ClInclude Include="include\ffmpeg\libavfilter\version_major.h" />
+    <ClInclude Include="include\ffmpeg\libavformat\avformat.h" />
+    <ClInclude Include="include\ffmpeg\libavformat\avio.h" />
+    <ClInclude Include="include\ffmpeg\libavformat\version.h" />
+    <ClInclude Include="include\ffmpeg\libavformat\version_major.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\adler32.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\aes.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\aes_ctr.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\ambient_viewing_environment.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\attributes.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\audio_fifo.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\avassert.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\avconfig.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\avstring.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\avutil.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\base64.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\blowfish.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\bprint.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\bswap.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\buffer.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\camellia.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\cast5.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\channel_layout.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\common.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\container_fifo.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\cpu.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\crc.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\csp.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\des.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\detection_bbox.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\dict.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\display.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\dovi_meta.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\downmix_info.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\encryption_info.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\error.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\eval.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\executor.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\ffversion.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\fifo.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\file.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\film_grain_params.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\frame.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hash.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hdr_dynamic_metadata.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hdr_dynamic_vivid_metadata.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hmac.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_amf.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_cuda.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_d3d11va.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_d3d12va.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_drm.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_dxva2.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_mediacodec.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_oh.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_opencl.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_qsv.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_vaapi.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_vdpau.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_videotoolbox.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\hwcontext_vulkan.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\iamf.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\imgutils.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\intfloat.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\intreadwrite.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\lfg.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\log.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\lzo.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\macros.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\mastering_display_metadata.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\mathematics.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\md5.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\mem.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\motion_vector.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\murmur3.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\opt.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\parseutils.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\pixdesc.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\pixelutils.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\pixfmt.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\random_seed.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\rational.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\rc4.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\refstruct.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\replaygain.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\ripemd.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\samplefmt.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\sha.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\sha512.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\spherical.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\stereo3d.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\tdrdi.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\tea.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\threadmessage.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\time.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\timecode.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\timestamp.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\tree.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\twofish.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\tx.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\uuid.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\version.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\video_enc_params.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\video_hint.h" />
+    <ClInclude Include="include\ffmpeg\libavutil\xtea.h" />
+    <ClInclude Include="include\ffmpeg\libswresample\swresample.h" />
+    <ClInclude Include="include\ffmpeg\libswresample\version.h" />
+    <ClInclude Include="include\ffmpeg\libswresample\version_major.h" />
+    <ClInclude Include="include\ffmpeg\libswscale\swscale.h" />
+    <ClInclude Include="include\ffmpeg\libswscale\version.h" />
+    <ClInclude Include="include\ffmpeg\libswscale\version_major.h" />
+    <ClInclude Include="src\shapes\Model.h" />
     <ClInclude Include="src\fizix_control\LQRController.h" />
     <ClInclude Include="src\shapes\SpringShape.h" />
     <ClInclude Include="src\ConfigHandler.h" />
@@ -231,6 +381,7 @@
     <ClInclude Include="src\resource\Texture.h" />
     <ClInclude Include="src\tools.h" />
     <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\util\video_decode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
