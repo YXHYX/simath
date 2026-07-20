@@ -17,7 +17,7 @@ vec3d sinc(vec3d p)
 }
 using namespace graphics;
 
-void audio_visualizer_demo(std::string audioPath)
+int audio_visualizer_demo(std::string audioPath)
 {
 	graphics::Graphics graph;
 	ResourceManager resourceManager;
@@ -59,5 +59,5 @@ void audio_visualizer_demo(std::string audioPath)
 		if (GetKeyState(VK_ESCAPE) & 0x8000)
 			break;
 	}
-	//return 0;
+	return 0;
 }

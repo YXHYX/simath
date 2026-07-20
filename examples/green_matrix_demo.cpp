@@ -4,7 +4,7 @@
 #include "tools.h"
 #include "Graphics.h"
 
-void green_matrix_demo()
+int green_matrix_demo()
 {
 	graphics::Graphics graph;
 	const int amount = 60;
@@ -71,4 +71,6 @@ void green_matrix_demo()
 
 		graph.render();
 	}
+
+	return 0;
 }

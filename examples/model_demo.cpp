@@ -7,7 +7,7 @@
 
 using namespace graphics;
 
-void model_demo()
+int model_demo()
 {
 	graphics::Graphics graph;
 	ResourceManager resourceManager;
@@ -15,7 +15,7 @@ void model_demo()
 	float elapsedTime = 0;
 	float totalTime = 0.0001;
 
-	std::shared_ptr<Model> m = std::make_shared<Model>("./model/sphere/sphere.obj");
+	std::shared_ptr<Model> m = std::make_shared<Model>("./res/model/sphere/sphere.obj");
 	while (true)
 	{
 
@@ -38,8 +38,8 @@ void model_demo()
 		totalTime += elapsedTime;
 
 		//quit
-		if (GetKeyState(VK_ESCAPE) & 0x8000)
+		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
 			break;
 	}
-	//return 0;
+	return 0;
 }

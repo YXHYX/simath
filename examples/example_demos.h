@@ -1,15 +1,14 @@
 #pragma once
 #include <string>
 
-void controller_demo();
-void audio_visualizer_demo(std::string audioPath);
-
-void green_matrix_demo();
+int controller_demo();
+int audio_visualizer_demo();
+int green_matrix_demo();
 
 int video_player_demo();
-void mandelbrot_demo();
-void physics_demo();
-void benchmark_demo();
-void font_display_demo();
-void sound_demo();
-void model_demo();
+int mandelbrot_demo();
+int physics_demo();
+int benchmark_demo();
+int font_display_demo();
+int sound_demo();
+int model_demo();

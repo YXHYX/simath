@@ -10,7 +10,7 @@
 
 
 using namespace graphics;
-void controller_demo()
+int controller_demo()
 {
 	graphics::Graphics graph;
 	ResourceManager resourceManager;
@@ -158,4 +158,6 @@ void controller_demo()
 		if (GetKeyState(VK_ESCAPE) & 0x8000)
 			break;
 	}
+
+	return 0;
 }

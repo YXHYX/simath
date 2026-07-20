@@ -9,7 +9,7 @@
 
 
 using namespace graphics;
-void benchmark_demo()
+int benchmark_demo()
 {
 	graphics::Graphics graph;
 	ResourceManager resourceManager;
@@ -71,4 +71,6 @@ void benchmark_demo()
 		if (GetKeyState(VK_ESCAPE) & 0x8000)
 			break;
 	}
+
+	return 0;
 }

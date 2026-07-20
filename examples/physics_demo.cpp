@@ -11,7 +11,7 @@
 
 
 using namespace graphics;
-void physics_demo()
+int physics_demo()
 {
 	graphics::Graphics graph;
 	ResourceManager resourceManager;
@@ -62,4 +62,6 @@ void physics_demo()
 		if (GetKeyState(VK_ESCAPE) & 0x8000)
 			break;
 	}
+
+	return 0;
 }

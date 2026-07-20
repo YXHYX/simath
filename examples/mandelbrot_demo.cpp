@@ -6,8 +6,7 @@
 
 using namespace graphics;
 
-//rename to main and comment out the main function somewhere else idk
-void mandelbrot_demo()
+int mandelbrot_demo()
 {
 	graphics::Graphics graph;
 
@@ -37,4 +36,5 @@ void mandelbrot_demo()
 		graph.display();
 	}
 
+	return 0;
 }
