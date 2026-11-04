@@ -65,15 +65,15 @@ const mathT::vec3uc FIXED_COLORS[16] =
     mathT::vec3uc(0,127,127), //CYAN 3
     mathT::vec3uc(127,0,0), //RED1 4
     mathT::vec3uc(127,0,127), //PURPLE 5
-    mathT::vec3uc(127,127,0), // GOLD 14
+    mathT::vec3uc(127,127,0), // GOLD 6
     mathT::vec3uc(192,192,192), //LIGHT GREY 7
-    mathT::vec3uc(128,128,128), //GREY 8
+    mathT::vec3uc(127,127,127), //GREY 8
     mathT::vec3uc(0,0,255), // L BLUE 9
     mathT::vec3uc(0,255,0), // LIME 10
     mathT::vec3uc(0,255,255), // L CYAN 11
     mathT::vec3uc(255,0,0), // L RED 12
     mathT::vec3uc(255,0,255), // L PURPLE 13
-    mathT::vec3uc(255,255,0), //YELLOW 6
+    mathT::vec3uc(255,255,0), //YELLOW 14
     mathT::vec3uc(255,255,255) // WHITE 15
 };
 
@@ -81,9 +81,11 @@ class Texture
 {
 private:
 	int dither = 0;
-    unsigned short colorMap(unsigned char r, unsigned char g, unsigned char b);
 public:
     std::string path;
+	// maps a pixel RGB to the allowed colors on the screen
+	static unsigned short colorMap(unsigned char r, unsigned char g, unsigned char b);
+
 	//copy constructor
     Texture(const Texture* t);
 	// p path to texture, d dithering option ( 0 = nothing, 1 = floyd steinberg, 2 = bayer ordered 4x4)

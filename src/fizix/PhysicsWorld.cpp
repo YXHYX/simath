@@ -18,7 +18,10 @@ void PhysicsWorld::addGlobalForce(vec3d force)
 
 void PhysicsWorld::addMaterialPoint(std::shared_ptr<Object> obj, double mass)
 {
-	this->materialPoints.push_back(std::make_shared<MaterialPoint>(obj,obj->transform.getPosition(),mass));
+	if(obj.get())
+		this->materialPoints.push_back(std::make_shared<MaterialPoint>(obj,obj->transform.getPosition(),mass));
+	else
+		this->materialPoints.push_back(std::make_shared<MaterialPoint>(nullptr, vec3d(0,0,0), mass));
 	//this->materialPoints.at(0)->dynamic = false;
 }
 
@@ -87,7 +90,8 @@ void PhysicsWorld::solveEuler(const float&dt)
 
 		e->setPosition(e->getPosition() + e->getVelocity() * dt);
 
-		e->getObject()->transform.setPosition(e->getPosition());
+		if(e->getObject().get())
+			e->getObject()->transform.setPosition(e->getPosition());
 	}
 
 }
@@ -108,8 +112,9 @@ void PhysicsWorld::solveRK4(const float& dt)
 		e->setVelocity(e->getVelocity() + (k1 + k2 * 2 + k3 * 2 + k4) / 6.f);
 
 		e->setPosition(e->getPosition() + e->getVelocity() * dt);
-		
-		e->getObject()->transform.setPosition(e->getPosition());
+
+		if (e->getObject().get())
+			e->getObject()->transform.setPosition(e->getPosition());
 	}
 	
 }

@@ -15,7 +15,7 @@ int physics_demo()
 {
 	graphics::Graphics graph;
 	ResourceManager resourceManager;
-	
+	PhysicsWorld world;
 	std::string msg = "";
 
 	resourceManager.addObject<Cube>("cube1",vec3d(0,1,0));
@@ -24,12 +24,13 @@ int physics_demo()
 	
 	resourceManager.bindTexture("teto", "cube1");
 
-	resourceManager.loadSound("teto", "./sounds/helloworld.wav");
+	resourceManager.loadSound("teto", "./res/sounds/helloworld.wav");
 	float elapsedTime = 0;
 	float totalTime = 0.0001;
 
 	resourceManager.getSound("teto")->setPitch(0.8);
 	resourceManager.getSound("teto")->playSound();
+
 
 	while (true)
 	{

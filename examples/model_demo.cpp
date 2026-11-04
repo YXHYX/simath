@@ -15,7 +15,7 @@ int model_demo()
 	float elapsedTime = 0;
 	float totalTime = 0.0001;
 
-	std::shared_ptr<Model> m = std::make_shared<Model>("./res/model/sphere/sphere.obj");
+	std::shared_ptr<Model> m = std::make_shared<Model>("./res/model/rocket.obj");
 	while (true)
 	{
 

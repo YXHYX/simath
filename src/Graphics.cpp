@@ -107,7 +107,7 @@ void graphics::Graphics::computeDepth()
 		double z1 = pp1.z, z2 =pp2.z, z3 = pp3.z;
 
 		//if any are behind the screen dont bother rendering
-		if (z1 <= 0 && z2 <= 0 && z3 <= 0)
+		if (z1 <= 0 || z2 <= 0 || z3 <= 0)
 			continue;
 
 		//project on the screen plane

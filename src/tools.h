@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <algorithm>
 #include <iostream>
 
 #define DPI 6.2831853
@@ -1037,6 +1038,12 @@ namespace mathT
 		}
 	};
 
+	template<typename T>
+	quat<T> identityquat()
+	{
+		return quat<T>(1, 0, 0, 0);
+	}
+
 	///  TYPE DEFINITIONS
 
 	typedef vec2<float> vec2f;
@@ -1221,6 +1228,16 @@ namespace mathT
 			std::cout << std::endl;
 		}
 	}
+
+	inline double degToRad(double degrees)
+	{
+		return degrees * MPI / 180;
+	}
+	inline double radToDeg(double rad)
+	{
+		return rad * 180 / 180;
+	}
+
 	namespace transformation
 	{
 		//void rotate(mat4x4d mat, vec3d rot);
@@ -1234,23 +1251,80 @@ namespace mathT
 		}
 		inline void scale(mat4x4d& mat, vec3d scale)
 		{
-			mat[0][0] *= scale.x;
-			mat[1][1] *= scale.y;
-			mat[2][2] *= scale.z;
+			mat4x4d scale_mat = identity4x4<double>();
+			scale_mat[0][0] = scale.x;
+			scale_mat[1][1] = scale.y;
+			scale_mat[2][2] = scale.z;
+
+			mat = mat * scale_mat;
 		}
 		
 		inline void rotate(mat4x4d& mat, vec3d axis, double theta)
 		{
 			//theta =theta- 2*MPI*int(theta / (2 * MPI));
-			mat = mat * normalize(quat<double>(cos(theta/2), axis.x, axis.y, axis.z)).rotation();
+			float half = theta / 2;
+			float sinhalf = sin(half);
+			axis = normalize(axis);
+			mat = mat * normalize(quat<double>(cos(half), sinhalf*axis.x, sinhalf * axis.y, sinhalf * axis.z)).rotation();
 		}
 		//rotate along each axis (x,y,z) with their given angle (theta beta gamma) in the xyz order (NOT COMMUTATIVE!!!!)
 		inline void rotate(mat4x4d& mat, vec3d axis)
 		{
 			//theta =theta- 2*MPI*int(theta / (2 * MPI));
-			mat = mat * normalize(quat<double>(cos(axis.x / 2), 1, 0, 0)).rotation();
-			mat = mat * normalize(quat<double>(cos(axis.y / 2), 0, 1, 0)).rotation();
-			mat = mat * normalize(quat<double>(cos(axis.z / 2), 0, 0, 1)).rotation();
+			
+			mat = mat * normalize(quat<double>(cos(axis.x / 2), sin(axis.x / 2), 0, 0)
+				* quat<double>(cos(axis.y / 2), 0, sin(axis.y / 2), 0)
+				* quat<double>(cos(axis.z / 2), 0, 0, sin(axis.z / 2))).rotation();
+		}
+		// 3. Quaternion from Up Vector
+		inline quat<double> get_rotation_from_up(vec3d target_dir)
+		{
+			vec3d u(0.0, 1.0, 0.0);
+			vec3d v = normalize(target_dir);
+
+			double dot = u.y * v.y; // u.x and u.z are 0, so dot = v.y
+			dot = std::clamp(dot, -1.0, 1.0);
+
+			// Case 1: Target is already pointing straight UP (0, 1, 0)
+			if (dot > 0.999999) {
+				return quat<double>(1.0, 0.0, 0.0, 0.0); // Identity (w=1, x=0, y=0, z=0)
+			}
+
+			// Case 2: Target is pointing straight DOWN (0, -1, 0)
+			if (dot < -0.999999) {
+				// 180-degree rotation around X-axis: q = (cos(90°), sin(90°), 0, 0) = (0, 1, 0, 0)
+				return quat<double>(0.0, 1.0, 0.0, 0.0);
+			}
+
+			// Standard Case: Shortest-arc quaternion (u x v = (-v.z, 0, v.x))
+			vec3d axis(-v.z, 0.0, v.x);
+			quat<double> q(1.0 + dot, axis.x, axis.y, axis.z);
+
+			return normalize(q);
+		}
+
+		// 4. Euler Angles from Up Vector
+		inline vec3d get_euler_from_up(vec3d target_dir)
+		{
+			vec3d v = normalize(target_dir);
+
+			// Singularity check: target is pointing straight UP or DOWN
+			if (std::abs(v.y) > 0.999999) {
+				return vec3d(0.0, 0.0, 0.0);
+			}
+
+			// 1. Roll (Rotation around Z-axis): Tilts (0,1,0) toward the X-axis
+			// std::atan2(v.x, v.y) gives the tilt angle in the XY-plane
+			double roll = std::atan2(-v.x, v.y);
+
+			// 2. Pitch (Rotation around X-axis): Tilts (0,1,0) toward/away from Z-axis
+			// std::asin(v.z) gives elevation relative to Z
+			double pitch = std::asin(std::clamp(v.z, -1.0, 1.0));
+
+			// 3. Yaw (Rotation around Y-axis): Unused for aligning a single UP vector
+			double yaw = 0.0;
+
+			return vec3d(pitch, yaw, roll); // (X=Pitch, Y=Yaw, Z=Roll)
 		}
 	};
 }

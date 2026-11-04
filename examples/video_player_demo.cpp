@@ -20,7 +20,7 @@
 
 using namespace graphics;
 const char * asciiShade = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'.       ";
-auto asciiSize =76;
+auto asciiSize = 76;
 
 void process_frame(AVFrame* frame, Graphics* graph) {
     // Let's assume YUV420p format
@@ -63,8 +63,8 @@ void process_frame(AVFrame* frame, Graphics* graph) {
             g = brightness - 0.344136 * (u_value - 128.0) - 0.714136 * (v_value - 128.0);
             b = brightness + 1.772 * (u_value - 128.0);
             
-            
-            /*/then use the map from texture to get the closest attribute
+            /*
+            //then use the map from texture to get the closest attribute
             //simple round
             r = r >= 127 ? (r > 191 ? 255 : 127) : (r > 64 ? 127 : 0);
             b = b >= 127 ? (b > 191 ? 255 : 127) : (b > 64 ? 127 : 0);
@@ -76,7 +76,7 @@ void process_frame(AVFrame* frame, Graphics* graph) {
             */
             unsigned short attr = Texture::colorMap(r,g,b);//index > 7 ? (index << 4 ): index;// // take surrounding pixel colors
 
-
+            attr = attr ;
             int characterShaded = (255.f-float(brightness))/ 255.f * float(asciiSize);
 
             graph->setPixel(i, j, asciiShade[characterShaded], attr);
@@ -98,7 +98,7 @@ int video_player_demo()
 	float elapsedTime = 0;
 	float totalTime = 0.0001;
 
-    std::string filename = "./res/videos/excuseme.mp4";
+    std::string filename = "./res/videos/badapple2.mp4";
 	
     // open video and retrieve information
     AVFormatContext* format_ctx = nullptr;

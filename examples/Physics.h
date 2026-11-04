@@ -5,7 +5,7 @@
 
 using namespace mathT;
 
-vec3d sombreroForceField(vec3d p)
+static vec3d sombreroForceField(vec3d p)
 {
 	vec3d force;
 	double rho = sqrt(p.x * p.x + p.z * p.z);

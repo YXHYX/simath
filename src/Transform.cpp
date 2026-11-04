@@ -17,8 +17,8 @@ void Transform::setPosition(mathT::vec3f p)
 	this->position = p;
 	this->model = mathT::identity4x4<double>();
 	mathT::transformation::translate(this->model, this->position);
-	mathT::transformation::scale(this->model, this->scale);
 	mathT::transformation::rotate(this->model, this->rotation);
+	mathT::transformation::scale(this->model, this->scale);
 }
 
 void Transform::setRotation(mathT::vec3f r)
@@ -26,8 +26,8 @@ void Transform::setRotation(mathT::vec3f r)
 	this->rotation = r;
 	this->model = mathT::identity4x4<double>();
 	mathT::transformation::translate(this->model, this->position);
-	mathT::transformation::scale(this->model, this->scale);
 	mathT::transformation::rotate(this->model, this->rotation);
+	mathT::transformation::scale(this->model, this->scale);
 }
 
 void Transform::setScale(mathT::vec3f s)
@@ -35,8 +35,8 @@ void Transform::setScale(mathT::vec3f s)
 	this->scale = s;
 	this->model = mathT::identity4x4<double>();
 	mathT::transformation::translate(this->model, this->position);
-	mathT::transformation::scale(this->model, this->scale);
 	mathT::transformation::rotate(this->model, this->rotation);
+	mathT::transformation::scale(this->model, this->scale);
 	
 	
 }

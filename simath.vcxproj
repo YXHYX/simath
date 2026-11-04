@@ -29,27 +29,27 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -143,6 +143,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)include\ffmpeg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,8 +157,10 @@
   <ItemGroup>
     <ClCompile Include="examples\benchmark_demo.cpp" />
     <ClCompile Include="examples\controller_demo.cpp" />
+    <ClCompile Include="examples\fluid_example.cpp" />
     <ClCompile Include="examples\font_display_demo.cpp" />
     <ClCompile Include="examples\model_demo.cpp" />
+    <ClCompile Include="examples\rocket_demo.cpp" />
     <ClCompile Include="examples\sound_demo.cpp" />
     <ClCompile Include="examples\video_player_demo.cpp" />
     <ClCompile Include="src\shapes\Model.cpp" />
@@ -191,6 +194,8 @@
     <ClCompile Include="examples\green_matrix_demo.cpp" />
     <ClCompile Include="src\shapes\Object.cpp" />
     <ClCompile Include="src\resource\Texture.cpp" />
+    <ClCompile Include="src\story_demo.cpp" />
+    <ClCompile Include="src\story_engine.cpp" />
     <ClCompile Include="src\tools.cpp" />
     <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
@@ -343,7 +348,6 @@
     <ClInclude Include="src\shapes\Model.h" />
     <ClInclude Include="src\fizix_control\LQRController.h" />
     <ClInclude Include="src\shapes\SpringShape.h" />
-    <ClInclude Include="src\ConfigHandler.h" />
     <ClInclude Include="src\game\entities\entity.h" />
     <ClInclude Include="examples\Physics.h" />
     <ClInclude Include="src\resource\font.h" />
@@ -353,7 +357,6 @@
     <ClInclude Include="include\sndfile.hh" />
     <ClInclude Include="src\fizix\collision\CollisionHandler.h" />
     <ClInclude Include="src\fizix_control\PIDController.h" />
-    <ClInclude Include="src\initialization.h" />
     <ClInclude Include="src\resource\Sound.h" />
     <ClInclude Include="src\resource\ResourceManager.h" />
     <ClInclude Include="src\fizix\Spring.h" />
@@ -379,8 +382,10 @@
     <ClInclude Include="include\stb_image_write.h" />
     <ClInclude Include="src\shapes\Object.h" />
     <ClInclude Include="src\resource\Texture.h" />
+    <ClInclude Include="src\story_engine.h" />
     <ClInclude Include="src\tools.h" />
     <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\util\delays.h" />
     <ClInclude Include="src\util\video_decode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

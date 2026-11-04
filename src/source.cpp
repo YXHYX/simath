@@ -34,7 +34,7 @@
 *		- better texture coloring
 *	- resource manager
 *		+ texture manager						done
-*		+ models ( if need for any)				done, need for specific triangular models only
+*		+ models ( if need for any)				done, need for specific triangular meshes only
 *												which i will have to design ( LOW POLY OR MY PC DIES ) 
 *		+ sounds manager						done
 *		- fonts									incorporate with resource manager and unify the asset folders
@@ -44,11 +44,9 @@ C:\Users\<currentUser>\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d
 by configuring the settings json file for easier fucking startup without fucking up my terminal shit
 
 its done but dawg shit ui, maybe add launcher using imGUI instead?
-
-
 */
 
 int main() {
-	int status = video_player_demo();
+	int status = mandelbrot_demo();
 	return status;
 }
